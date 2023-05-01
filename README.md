@@ -1,1 +1,1 @@
-# emotimonitor-trello
+Trello Plugin for Emotimonitor
