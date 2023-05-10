@@ -1,5 +1,5 @@
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
@@ -7,18 +7,67 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User?   @relation(fields: [authorId], references: [id])
-  authorId  Int?
+model TrelloCard {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  task          String
+  label         String
+  metric        Metric[]
+  timestamp     DateTime
+  status        Status
+  reflection    String
+  owner         User     @relation(fields: [ownerId], references: [id])
+  ownerId       String   @db.ObjectId
+  project       Project  @relation(fields: [projectId], references: [id])
+  projectId     String   @db.ObjectId
+}
+
+model JiraCard {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  task          String
+  label         String
+  metric        Metric[]
+  timestamp     DateTime
+  status        Status
+  reflection    String
+  owner         User     @relation(fields: [ownerId], references: [id])
+  ownerId       String   @db.ObjectId
+  project       Project  @relation(fields: [projectId], references: [id])
+  projectId     String   @db.ObjectId
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  name              String
+  email             String
+  trelloCards       TrelloCard[]
+  jiraCards         JiraCard[]
+  adminProjectIds   String[]    @db.ObjectId
+  adminProjects     Project[]   @relation(fields: [adminProjectIds], references: [id])
+}
+
+model Project{
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  source        Source
+  adminIds      String[]  @db.ObjectId
+  adminList     User[]    @relation(fields: [adminIds], references: [id])
+  trelloCards   TrelloCard[]
+  jiraCards     JiraCard[]
+}
+
+type Metric{
+  name   String
+  score  Int
+}
+
+enum Status {
+  IN_ANALYSIS
+  IN_DEV
+  IN_SYSTEM_TEST
+  DONE
+}
+
+enum Source {
+  TRELLO
+  JIRA
+  GITHUB
 }
