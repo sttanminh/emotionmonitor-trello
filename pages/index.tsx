@@ -3,8 +3,8 @@ import { GetStaticProps, NextPage } from "next";
 import { User } from "@prisma/client";
 import { useState, useEffect, useRef } from "react";
 import { Row, Col } from "react-bootstrap";
-import Slider from "@/Components/Slider";
-import ReflectionBox from "@/Components/reflection-box";
+import { Slider, ReflectionBox } from "@/Components";
+
 
 interface Metric {
   id: string;
@@ -108,20 +108,20 @@ const Home: NextPage<Props> = () => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async () => {
-  const user = await prisma.user.create({
-    data: {
-      name: "Monica",
-      email: "monica@prisma.io",
-    },
-  });
-  const feed = await prisma.user.findMany({
-    where: { name: "Monica" },
-  });
-  return {
-    props: { feed },
-    revalidate: 10,
-  };
-};
+// export const getStaticProps: GetStaticProps = async () => {
+//   const user = await prisma.user.create({
+//     data: {
+//       name: "Monica",
+//       email: "monica@prisma.io",
+//     },
+//   });
+//   const feed = await prisma.user.findMany({
+//     where: { name: "Monica" },
+//   });
+//   return {
+//     props: { feed },
+//     revalidate: 10,
+//   };
+// };
 
 export default Home;
