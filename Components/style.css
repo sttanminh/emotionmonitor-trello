@@ -133,41 +133,60 @@
   font-size: 60px;
 }
 
+/* reflection box css */
 .reflection-box-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 1rem;
-  }
-  
-  /* reflection box css */
-  .box {
-    border: 2px solid #d3d3d3;
-    border-radius: 8px;
-    background-color: #f8f8f8;
-    font-size: 16px;
-  }
-  
-  .text-box {
-    height: 150px;
-    width: 70vw;
-    padding: 8px 12px;
-    resize: none;
-  }
-  
-  .recommendation-box {
-    position: relative;
-    top: -120px;
-    height: fit-content;
-    width: 60vw;
-    padding: 15px 10px;
-    transition: all 0.5s ease-in-out;
-    word-wrap: break-word;
-    z-index: -1;
-  }
-  
-  .text-box:hover ~ .recommendation-box {
-    top: -5px;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem;
+}
 
+.box {
+  border: 2px solid #d3d3d3;
+  border-radius: 8px;
+  background-color: #f8f8f8;
+  font-size: 16px;
+}
+
+.text-box {
+  height: 150px;
+  width: 60vw;
+  padding: 8px 12px;
+  resize: none;
+}
+
+.recommendation-box {
+  position: relative;
+  top: -120px;
+  height: fit-content;
+  width: 45vw;
+  padding: 15px 10px;
+  transition: all 0.5s ease-in-out;
+  word-wrap: break-word;
+  z-index: -1;
+}
+
+.text-box:hover ~ .recommendation-box {
+  top: -5px;
+}
+
+/* button css */
+.custom-button {
+  margin: 0px 10px;
+  background-color: #00bd29;
+  border: none;
+  width: 150px;
+  color: white;
+  padding: 10px 15px;
+  text-align: center;
+  display: inline-block;
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.custom-button:hover {
+  background-color: #009b22;
+  cursor: pointer;
+}

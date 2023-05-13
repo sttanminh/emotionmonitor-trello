@@ -3,8 +3,7 @@ import { GetStaticProps, NextPage } from "next";
 import { User } from "@prisma/client";
 import { useState, useEffect, useRef } from "react";
 import { Row, Col } from "react-bootstrap";
-import { Slider, ReflectionBox } from "@/Components";
-
+import { Slider, ReflectionBox, Button } from "@/Components";
 
 interface Metric {
   id: string;
@@ -68,15 +67,15 @@ const Home: NextPage<Props> = () => {
 
   console.log(metrics);
 
-  // Handle DONE button click
-  const handleDoneButtonClick = () => {
+  // Handle Save button click
+  const handleSaveButtonClick = () => {
     console.log(metrics);
     console.log(textFieldValue);
   };
 
   return (
     <div className="App">
-      <h1> Emotomonitor </h1>
+      <h1 className="title"> Emotimonitor </h1>
       <div className="SliderDiv">
         {metrics
           .map((metric) => (
@@ -101,10 +100,10 @@ const Home: NextPage<Props> = () => {
             </div>
           ))}
       </div>
-      <button onClick={addDummyMetric}>Add Dummy Metric</button>
       <ReflectionBox onContentChange={handleTextFieldChange}></ReflectionBox>
-      <button onClick={handleDoneButtonClick}> DONE </button>
-    </div>
+      <Button onClick={addDummyMetric} label="Add Metric"></Button>
+      <Button onClick={handleSaveButtonClick} label="Save"></Button>
+    </div> 
   );
 };
 
