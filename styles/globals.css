@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+.title {
+  font-size: 28px;
+  color: black;
+  margin-top: 20px;
+  font-weight: bold;
+}
+
+h1 {
+  font-weight: bold;
+}
+
+.App {
+  text-align: center;
+  margin-bottom: 100px;
+}
+
 .ColSlider{
   width: fit-content;
   margin: 0;
@@ -11,7 +27,6 @@
 }
 
 .SliderDiv{
-  
   /* border: 5px solid; */
   margin: auto;
   width: fit-content;
