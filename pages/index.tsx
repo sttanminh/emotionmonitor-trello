@@ -1,10 +1,10 @@
-import prisma from '@/lib/prisma'
-import { GetStaticProps, NextPage } from 'next'
-import { User } from '@prisma/client'
-import { useState, useEffect, useRef } from 'react'
-import { Row, Col } from 'react-bootstrap'
-import Slider from '@/Components/Slider'
-import TextField from '@/Components/TextFiled'
+import prisma from "@/lib/prisma";
+import { GetStaticProps, NextPage } from "next";
+import { User } from "@prisma/client";
+import { useState, useEffect, useRef } from "react";
+import { Row, Col } from "react-bootstrap";
+import Slider from "@/Components/Slider";
+import ReflectionBox from "@/Components/reflection-box";
 
 interface Metric {
   id: string;
@@ -21,17 +21,11 @@ const Home: NextPage<Props> = () => {
   // const [sliderValue, setSliderValue] = useState(1);
   const [textFieldValue, setTextFieldValue] = useState("");
 
-
-
-
-
-
-
-  
-  //Generate dummy id for testing
+  // Generate dummy id for testing
   function generateRandomString(length: number): string {
-    let result = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = "";
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     const charactersLength = characters.length;
     for (let i = 0; i < length; i++) {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
@@ -50,7 +44,10 @@ const Home: NextPage<Props> = () => {
   };
 
   // Get slider value
-  const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>, metricId: string) => {
+  const handleSliderChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    metricId: string
+  ) => {
     const rate = parseInt(event.target.value, 10);
     const updatedMetrics = metrics.map((metric) => {
       if (metric.id === metricId) {
@@ -60,9 +57,9 @@ const Home: NextPage<Props> = () => {
     });
     setMetrics(updatedMetrics);
     console.log(metrics);
-
   };
-  //Get textField value
+
+  // Get textField value
   const handleTextFieldChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
@@ -71,7 +68,6 @@ const Home: NextPage<Props> = () => {
 
   console.log(metrics);
 
-
   // Handle DONE button click
   const handleDoneButtonClick = () => {
     console.log(metrics);
@@ -79,56 +75,53 @@ const Home: NextPage<Props> = () => {
   };
 
   return (
-    <div>
+    <div className="App">
+      <h1> Emotomonitor </h1>
       <div className="SliderDiv">
-        {metrics.map((metric) => (
-          <div key={metric.id} className="ColSlider">
-            <Slider metric={metric.name} value={metric.rate} onChange={(event) => handleSliderChange(event, metric.id)} />
-          </div>
-        )).reduce((rows, col, index) => {
-          if (index % 3 === 0) {
-            rows.push([]);
-          }
-          rows[rows.length - 1].push(col);
-          return rows;
-        }, []).map((row, rowIndex) => (
-          <div key={rowIndex} className="SliderDiv">
-            {row}
-          </div> 
-        ))}
+        {metrics
+          .map((metric) => (
+            <div key={metric.id} className="ColSlider">
+              <Slider
+                metric={metric.name}
+                value={metric.rate}
+                onChange={(event) => handleSliderChange(event, metric.id)}
+              ></Slider>
+            </div>
+          ))
+          .reduce((rows, col, index) => {
+            if (index % 3 === 0) {
+              rows.push([]);
+            }
+            rows[rows.length - 1].push(col);
+            return rows;
+          }, [])
+          .map((row, rowIndex) => (
+            <div key={rowIndex} className="SliderDiv">
+              {row}
+            </div>
+          ))}
       </div>
-      <TextField value={textFieldValue} onChange={handleTextFieldChange}></TextField>
-
       <button onClick={addDummyMetric}>Add Dummy Metric</button>
-      <div>
-        <button onClick={handleDoneButtonClick} > DONE </button>
-      </div>
+      <ReflectionBox onContentChange={handleTextFieldChange}></ReflectionBox>
+      <button onClick={handleDoneButtonClick}> DONE </button>
     </div>
   );
-}
-
-
-
-
-
-
-
-
+};
 
 export const getStaticProps: GetStaticProps = async () => {
   const user = await prisma.user.create({
-        data: {
-          name: 'Monica',
-          email: 'monica@prisma.io'
-        },
-      })
+    data: {
+      name: "Monica",
+      email: "monica@prisma.io",
+    },
+  });
   const feed = await prisma.user.findMany({
-    where: { name: "Monica" }
-    });
-  return { 
-    props: { feed }, 
-    revalidate: 10 
-  }
-}
+    where: { name: "Monica" },
+  });
+  return {
+    props: { feed },
+    revalidate: 10,
+  };
+};
 
 export default Home;
