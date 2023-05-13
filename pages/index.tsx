@@ -83,9 +83,9 @@ const Home: NextPage<Props> = () => {
       <div className="SliderDiv">
         {metrics.map((metric) => (
           <div key={metric.id} className="ColSlider">
-            <Slider metric={metric.name} value={metric.rate} onChange={(event) => handleSliderChange(event, metric.id)} />
+            <Slider id={metric.id} metric={metric.name} rate={metric.rate} onChange={(event) => handleSliderChange(event, metric.id)} />
           </div>
-        )).reduce((rows, col, index) => {
+        )).reduce((rows: JSX.Element[][], col, index) => {
           if (index % 3 === 0) {
             rows.push([]);
           }
@@ -108,27 +108,31 @@ const Home: NextPage<Props> = () => {
 }
 
 
+// Need dataflow
+//When powerup start, need all information from trello board
+//Extracting data from database
+//Check if user and project exsiting
+//If yes -> update , if not -> update new user, new project, then update trello card
 
 
 
 
 
 
-
-export const getStaticProps: GetStaticProps = async () => {
-  const user = await prisma.user.create({
-        data: {
-          name: 'Monica',
-          email: 'monica@prisma.io'
-        },
-      })
-  const feed = await prisma.user.findMany({
-    where: { name: "Monica" }
-    });
-  return { 
-    props: { feed }, 
-    revalidate: 10 
-  }
-}
+// export const getStaticProps: GetStaticProps = async () => {
+//   const user = await prisma.user.create({
+//         data: {
+//           name: 'Monica',
+//           email: 'monica@prisma.io'
+//         },
+//       })
+//   const feed = await prisma.user.findMany({
+//     where: { name: "Monica" }
+//     });
+//   return { 
+//     props: { feed }, 
+//     revalidate: 10 
+//   }
+// }
 
 export default Home;

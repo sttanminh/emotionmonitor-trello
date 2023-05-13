@@ -4,11 +4,12 @@ import React, { useState } from "react";
 interface SliderProps {
   id: string;  // Add this line
   metric: string;
+  rate: number;
   onChange: (event: React.ChangeEvent<HTMLInputElement>, id: string) => void;  // Modify this line
 }
 
-const Slider: React.FC<SliderProps> = ({ id, metric, onChange }) => {  // Modify this line
-  const [value, setValue] = useState("3");
+const Slider: React.FC<SliderProps> = ({ id, metric,rate, onChange }) => {  // Modify this line
+  const [value, setValue] = useState(String(rate));
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
