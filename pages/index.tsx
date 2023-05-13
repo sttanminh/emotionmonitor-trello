@@ -115,20 +115,20 @@ const Home: NextPage<Props> = () => {
 
 
 
-export const getStaticProps: GetStaticProps = async () => {
-  const user = await prisma.user.create({
-        data: {
-          name: 'Monica',
-          email: 'monica@prisma.io'
-        },
-      })
-  const feed = await prisma.user.findMany({
-    where: { name: "Monica" }
-    });
-  return { 
-    props: { feed }, 
-    revalidate: 10 
-  }
-}
+// export const getStaticProps: GetStaticProps = async () => {
+//   const user = await prisma.user.create({
+//         data: {
+//           name: 'Monica',
+//           email: 'monica@prisma.io'
+//         },
+//       })
+//   const feed = await prisma.user.findMany({
+//     where: { name: "Monica" }
+//     });
+//   return { 
+//     props: { feed }, 
+//     revalidate: 10 
+//   }
+// }
 
 export default Home;
