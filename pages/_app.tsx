@@ -7,7 +7,6 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
   return (
     <>
       <Component {...pageProps} />
-      <Script src="https://p.trellocdn.com/power-up.min.js" />
     </>
   );
 }
