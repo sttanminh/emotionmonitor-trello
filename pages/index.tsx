@@ -4,6 +4,7 @@ import { User } from "@prisma/client";
 import { useState, useEffect, useRef } from "react";
 import { Row, Col } from "react-bootstrap";
 import { Slider, ReflectionBox, Button } from "@/Components";
+import '../Components/powerup.js'
 
 interface Metric {
   id: string;
@@ -19,6 +20,10 @@ const Home: NextPage<Props> = () => {
   const [metrics, setMetrics] = useState<Metric[]>([]);
   // const [sliderValue, setSliderValue] = useState(1);
   const [textFieldValue, setTextFieldValue] = useState("");
+
+  useEffect(() => {
+    // TrelloPowerUp code has already been initialized from the imported file
+  }, []);
 
   // Generate dummy id for testing
   function generateRandomString(length: number): string {
