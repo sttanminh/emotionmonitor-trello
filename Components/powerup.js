@@ -1,8 +1,8 @@
 var btnCallback = async function display(t, options) {
     // demo code that will be used to extract data
-    // var cardId = t.getContext().card;
-    // var memberId = t.getContext().member;
-    // var boardId = t.getContext().board;
+    var cardId = t.getContext().card;
+    var memberId = t.getContext().member;
+    var boardId = t.getContext().board;
     // const card = await fetch(`https://api.trello.com/1/cards/${cardId}?fields=name,desc&key=${apiKey}&token=${apiToken}`);
     // const member  = await fetch(`https://api.trello.com/1/members/${memberId}?key=${apiKey}&token=${apiToken}`)
     // const board = await fetch(`https://api.trello.com/1/boards/${boardId}?key=${apiKey}&token=${apiToken}`)
