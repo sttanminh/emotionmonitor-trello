@@ -13,7 +13,7 @@ var btnCallback = async function display(t, options) {
         // display
         t.modal({
             title: "Emotimonitor",
-            url: 'https://extraordinary-paprenjak-38a4ca.netlify.app',
+            url: '',
             fullscreen: true
         });
     } catch (error) {
@@ -26,7 +26,7 @@ if (typeof window !== 'undefined') {
   window.TrelloPowerUp.initialize({
       'card-buttons': function (t, options) {
           return [{
-              text: 'Emotimonitor-Testing',
+              text: 'Emotimonitor',
               callback: btnCallback
           }];
       }
