@@ -1,8 +1,9 @@
 import prisma from "@/lib/prisma";
-import { NextPage, GetServerSideProps, GetServerSidePropsContext } from "next";
+import { NextPage, GetServerSidePropsContext } from "next";
 import { useState, useEffect, useRef } from "react";
 import { Slider, ReflectionBox, Button } from "@/Components";
 import '../Components/powerup.js'
+import dotenv from 'dotenv';
 
 interface Metric {
   id: string;
@@ -22,7 +23,7 @@ const CardPage: NextPage<Props> = (dbMetrics: Props) => {
   useEffect(() => {
     // TrelloPowerUp code has already been initialized from the imported file
   }, []);
-
+	console.log(dbMetrics.metrics[0]);
   // Generate dummy id for testing
   function generateRandomString(length: number): string {
     let result = "";
@@ -109,6 +110,9 @@ const CardPage: NextPage<Props> = (dbMetrics: Props) => {
 };
 
 export async function getServerSideProps(context: GetServerSidePropsContext){  
+	dotenv.config();
+	const apiKey =  process.env.API_KEY!;
+	const apiToken = process.env.API_TOKEN!;
 	console.log("In get server side")
 	console.log(context.query)
 	const { ids } = context.query
@@ -119,14 +123,22 @@ export async function getServerSideProps(context: GetServerSidePropsContext){
   console.log(memberId);
   console.log(boardId);
 	// Check if user exists, if no, insert user
+	// const card = await fetch(`https://api.trello.com/1/cards/${cardId}?fields=name,desc&key=${apiKey}&token=${apiToken}`);
 	// Check if board exists, if no, insert board
+	// const member  = await fetch(`https://api.trello.com/1/members/${memberId}?key=${apiKey}&token=${apiToken}`)
 	// Check if card exists, if no, insert card
+	// const board = await fetch(`https://api.trello.com/1/boards/${boardId}?key=${apiKey}&token=${apiToken}`)
 	// Check if card with user id and project id exists, if yes, retrieve data. If no, return nothing
     // const res = await fetch('https://api.github.com/repos/vercel/next.js');
     // const repo = await res.json();
+	var dummyMetric: Metric = {
+		id: "1234567890",
+		name: "Dummy Metric",
+		rate: 0,
+	};
 	return { 
 		props: {
-				dbMetric: [] 
+				dbMetric: [dummyMetric] 
 			} 
 	};
 };
