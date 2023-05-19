@@ -7,17 +7,6 @@ import { Row, Col } from "react-bootstrap";
 import { Slider, ReflectionBox, Button } from "@/Components";
 import '../Components/powerup.js'
 
-// function CardPage() {
-//     const router = useRouter();
-//     console.log(router.query);
-//     var cardId = router.query[0];
-//     var memberId = router.query[1];
-//     var boardId = router.query[2];
-//     return <h1>Individual card page</h1>
-// }
-
-
-
 interface Metric {
   id: string;
   name: string;
@@ -38,9 +27,10 @@ const CardPage: NextPage<Props> = () => {
   }, []);
   const router = useRouter();
   console.log(router.query);
-  var cardId = router.query[0];
-  var memberId = router.query[1];
-  var boardId = router.query[2];
+  const { ids } = router.query
+  var cardId = ids?[0]:null;
+  var memberId = ids?[1]:null;
+  var boardId = ids?[2]:null;
   console.log(cardId);
   console.log(memberId);
   console.log(boardId);
