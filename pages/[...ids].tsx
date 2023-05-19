@@ -16,7 +16,7 @@ interface Props {
   metrics: Metric[];
 }
 
-const CardPage: NextPage<Props> = (dbMetrics: Props) => {
+function CardPage(dbMetrics: Metric[]) {
   const [metrics, setMetrics] = useState<Metric[]>([]);
   // const [sliderValue, setSliderValue] = useState(1);
   const [textFieldValue, setTextFieldValue] = useState("");
@@ -24,7 +24,7 @@ const CardPage: NextPage<Props> = (dbMetrics: Props) => {
   useEffect(() => {
     // TrelloPowerUp code has already been initialized from the imported file
   }, []);
-	console.log(dbMetrics.metrics[0]);
+	console.log(dbMetrics);
   // Generate dummy id for testing
   function generateRandomString(length: number): string {
     let result = "";
@@ -110,7 +110,7 @@ const CardPage: NextPage<Props> = (dbMetrics: Props) => {
   );
 };
 
-export async function getServerSideProps(context: GetServerSidePropsContext){  
+export async function getServerSideProps(context: GetServerSidePropsContext) {
 	try {
 		dotenv.config();
 		const apiKey =  process.env.API_KEY!;
