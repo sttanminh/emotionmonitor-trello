@@ -108,8 +108,9 @@ const CardPage: NextPage<Props> = (dbMetrics: Props) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async(context: GetServerSidePropsContext)  => {
-  console.log(context.query)
+export async function getServerSideProps(context: GetServerSidePropsContext){  
+	console.log("In get server side")
+	console.log(context.query)
 	const { ids } = context.query
   var cardId = ids?ids[0]:null;
   var memberId = ids?ids[1]:null;
@@ -117,11 +118,15 @@ export const getServerSideProps: GetServerSideProps = async(context: GetServerSi
   console.log(cardId);
   console.log(memberId);
   console.log(boardId);
+	// Check if user exists, if no, insert user
+	// Check if board exists, if no, insert board
+	// Check if card exists, if no, insert card
+	// Check if card with user id and project id exists, if yes, retrieve data. If no, return nothing
     // const res = await fetch('https://api.github.com/repos/vercel/next.js');
     // const repo = await res.json();
-	return { props: 
-			{
-					dbMetric: [] 
+	return { 
+		props: {
+				dbMetric: [] 
 			} 
 	};
 };
