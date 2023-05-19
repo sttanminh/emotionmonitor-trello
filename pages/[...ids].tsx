@@ -1,9 +1,6 @@
-import { useRouter } from 'next/router';
 import prisma from "@/lib/prisma";
-import { GetStaticProps, NextPage } from "next";
-import { User } from "@prisma/client";
+import { NextPage, GetServerSideProps, GetServerSidePropsContext } from "next";
 import { useState, useEffect, useRef } from "react";
-import { Row, Col } from "react-bootstrap";
 import { Slider, ReflectionBox, Button } from "@/Components";
 import '../Components/powerup.js'
 
@@ -17,7 +14,7 @@ interface Props {
   metrics: Metric[];
 }
 
-const CardPage: NextPage<Props> = () => {
+const CardPage: NextPage<Props> = (dbMetrics: Props) => {
   const [metrics, setMetrics] = useState<Metric[]>([]);
   // const [sliderValue, setSliderValue] = useState(1);
   const [textFieldValue, setTextFieldValue] = useState("");
@@ -25,15 +22,6 @@ const CardPage: NextPage<Props> = () => {
   useEffect(() => {
     // TrelloPowerUp code has already been initialized from the imported file
   }, []);
-  const router = useRouter();
-  console.log(router.query);
-  const { ids } = router.query
-  var cardId = ids?ids[0]:null;
-  var memberId = ids?ids[1]:null;
-  var boardId = ids?ids[2]:null;
-  console.log(cardId);
-  console.log(memberId);
-  console.log(boardId);
 
   // Generate dummy id for testing
   function generateRandomString(length: number): string {
@@ -120,6 +108,23 @@ const CardPage: NextPage<Props> = () => {
   );
 };
 
+export const getServerSideProps: GetServerSideProps = async(context: GetServerSidePropsContext)  => {
+  console.log(context.query)
+	const { ids } = context.query
+  var cardId = ids?ids[0]:null;
+  var memberId = ids?ids[1]:null;
+  var boardId = ids?ids[2]:null;
+  console.log(cardId);
+  console.log(memberId);
+  console.log(boardId);
+    // const res = await fetch('https://api.github.com/repos/vercel/next.js');
+    // const repo = await res.json();
+	return { props: 
+			{
+					dbMetric: [] 
+			} 
+	};
+};
 
 // export const getStaticProps: GetStaticProps = async () => {
 //   const user = await prisma.user.create({
