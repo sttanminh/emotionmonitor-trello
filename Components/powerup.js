@@ -13,7 +13,7 @@ var btnCallback = async function display(t, options) {
         // display
         t.modal({
             title: "Emotimonitor",
-            url: '',
+            url: "https://extraordinary-paprenjak-38a4ca.netlify.app/" + cardId,
             fullscreen: true
         });
     } catch (error) {
