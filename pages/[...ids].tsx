@@ -28,9 +28,9 @@ const CardPage: NextPage<Props> = () => {
   const router = useRouter();
   console.log(router.query);
   const { ids } = router.query
-  var cardId = ids?[0]:null;
-  var memberId = ids?[1]:null;
-  var boardId = ids?[2]:null;
+  var cardId = ids?ids[0]:null;
+  var memberId = ids?ids[1]:null;
+  var boardId = ids?ids[2]:null;
   console.log(cardId);
   console.log(memberId);
   console.log(boardId);
