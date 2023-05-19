@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Slider, ReflectionBox, Button } from "@/Components";
 import '../Components/powerup.js'
 import dotenv from 'dotenv';
+import { error } from "console";
 
 interface Metric {
   id: string;
@@ -110,18 +111,23 @@ const CardPage: NextPage<Props> = (dbMetrics: Props) => {
 };
 
 export async function getServerSideProps(context: GetServerSidePropsContext){  
-	dotenv.config();
-	const apiKey =  process.env.API_KEY!;
-	const apiToken = process.env.API_TOKEN!;
-	console.log("In get server side")
-	console.log(context.query)
-	const { ids } = context.query
-  var cardId = ids?ids[0]:null;
-  var memberId = ids?ids[1]:null;
-  var boardId = ids?ids[2]:null;
-  console.log(cardId);
-  console.log(memberId);
-  console.log(boardId);
+	try {
+		dotenv.config();
+		const apiKey =  process.env.API_KEY!;
+		const apiToken = process.env.API_TOKEN!;
+		console.log("In get server side")
+		console.log(context.query)
+		const { ids } = context.query
+		var cardId = ids?ids[0]:null;
+		var memberId = ids?ids[1]:null;
+		var boardId = ids?ids[2]:null;
+		console.log(cardId);
+		console.log(memberId);
+		console.log(boardId);
+	} catch (e) {
+		console.log(error)
+	}
+	
 	// Check if user exists, if no, insert user
 	// const card = await fetch(`https://api.trello.com/1/cards/${cardId}?fields=name,desc&key=${apiKey}&token=${apiToken}`);
 	// Check if board exists, if no, insert board
