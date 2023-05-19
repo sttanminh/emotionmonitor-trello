@@ -10,7 +10,7 @@ var btnCallback = async function display(t, options) {
     // const member_data = await member.json();
     // const board_data = await board.json();
     try {
-        var params = "cardId=" + cardId + "&memberId=" + memberId + "&boardId=" + boardId
+        var params = "cardId=" + cardId + "&&amp;memberId=" + memberId + "&&amp;boardId=" + boardId
         console.log(params);
         // display
         t.modal({
