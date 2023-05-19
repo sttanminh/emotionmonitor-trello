@@ -70,8 +70,6 @@ const Home: NextPage<Props> = () => {
     setTextFieldValue(event.target.value);
   };
 
-  console.log(metrics);
-
   // Handle Save button click
   const handleSaveButtonClick = () => {
     console.log(metrics);
