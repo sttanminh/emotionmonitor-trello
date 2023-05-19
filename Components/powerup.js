@@ -10,10 +10,12 @@ var btnCallback = async function display(t, options) {
     // const member_data = await member.json();
     // const board_data = await board.json();
     try {
+        var params = "cardId=" + cardId + "&memberId=" + memberId + "&boardId=" + boardId
+        console.log(params);
         // display
         t.modal({
             title: "Emotimonitor",
-            url: "https://extraordinary-paprenjak-38a4ca.netlify.app/" + cardId,
+            url: "https://extraordinary-paprenjak-38a4ca.netlify.app?" + params,
             fullscreen: true
         });
     } catch (error) {
