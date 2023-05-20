@@ -4,20 +4,22 @@ import { useState, useEffect, useRef } from "react";
 import { Slider, ReflectionBox, Button } from "@/Components";
 import '../Components/powerup.js'
 import dotenv from 'dotenv';
-import { error } from "console";
+import insertBoard from "@/pages/api/board";
+import insertUser from "@/pages/api/member";
+import insertCard from "@/pages/api/card";
 
-interface Metric {
+interface Rating {
   id: string;
   name: string;
   rate: number;
 }
 
 interface Props {
-  metrics: Metric[];
+  metrics: Rating[];
 }
 
-function CardPage(dbMetrics: Metric[]) {
-  const [metrics, setMetrics] = useState<Metric[]>([]);
+function CardPage(dbMetrics: Rating[]) {
+  const [metrics, setMetrics] = useState<Rating[]>([]);
   // const [sliderValue, setSliderValue] = useState(1);
   const [textFieldValue, setTextFieldValue] = useState("");
 
@@ -39,7 +41,7 @@ function CardPage(dbMetrics: Metric[]) {
 
   // Add dummy metric
   const addDummyMetric = () => {
-    const dummyMetric: Metric = {
+    const dummyMetric: Rating = {
       id: generateRandomString(10),
       name: "Dummy Metric",
       rate: 0,
@@ -70,11 +72,22 @@ function CardPage(dbMetrics: Metric[]) {
     setTextFieldValue(event.target.value);
   };
 
-  // Handle Save button click
-  const handleSaveButtonClick = () => {
-    console.log(metrics);
-    console.log(textFieldValue);
-  };
+  // // Handle Save button click
+  // const handleSaveButtonClick = () => {
+  //   console.log(metrics);
+  //   console.log(textFieldValue);
+  // };
+	async function handleSaveButtonClick() {
+		const response = await fetch('/api/rating', {
+			method: 'POST',
+			body: JSON.stringify({
+				//Add the ratings here with: score, userid, cardid, metricid, timestamp
+			}),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+	}
 
   return (
     <div className="App">
@@ -111,60 +124,50 @@ function CardPage(dbMetrics: Metric[]) {
 };
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-	try {
-		dotenv.config();
-		const apiKey =  process.env.API_KEY!;
-		const apiToken = process.env.API_TOKEN!;
-		console.log("In get server side")
-		console.log(context.query)
-		const { ids } = context.query
-		var cardId = ids?ids[0]:null;
-		var memberId = ids?ids[1]:null;
-		var boardId = ids?ids[2]:null;
-		console.log(cardId);
-		console.log(memberId);
-		console.log(boardId);
-	} catch (e) {
-		console.log(error)
+	const { ids } = context.query
+	var cardId = ids?ids[0]:undefined;
+	var memberId = ids?ids[1]:undefined;
+	var boardId = ids?ids[2]:undefined;
+	if (boardId == undefined || memberId == undefined || cardId == undefined) {
+		throw new Error("Missing params");
 	}
-	
-	// Check if user exists, if no, insert user
-	// const card = await fetch(`https://api.trello.com/1/cards/${cardId}?fields=name,desc&key=${apiKey}&token=${apiToken}`);
-	// Check if board exists, if no, insert board
-	// const member  = await fetch(`https://api.trello.com/1/members/${memberId}?key=${apiKey}&token=${apiToken}`)
-	// Check if card exists, if no, insert card
-	// const board = await fetch(`https://api.trello.com/1/boards/${boardId}?key=${apiKey}&token=${apiToken}`)
-	// Check if card with user id and project id exists, if yes, retrieve data. If no, return nothing
-    // const res = await fetch('https://api.github.com/repos/vercel/next.js');
-    // const repo = await res.json();
-	var dummyMetric: Metric = {
-		id: "1234567890",
-		name: "Dummy Metric",
-		rate: 0,
-	};
+	await insertBoard(boardId);
+	await insertUser(memberId);
+	await insertCard(cardId);
+
+	var retrievedRatings: Rating[] = [];
+	const metrics = await prisma.metric.findMany();
+	for await (var metric of metrics) {
+		var result = await prisma.rating.findMany({
+			where: {
+				userId: memberId,
+				trelloCardId: cardId,
+				metricId: metric.id
+			}
+			,orderBy: {
+				timestamp: 'desc'
+			}
+			,take: 1
+		})
+		if (result.length != 0) {
+			retrievedRatings.push({
+				id: "1234567890",
+				name: metric.name,
+				rate: result[0].score
+			})
+		} else {
+			retrievedRatings.push({
+				id: "1234567890",
+				name: metric.name,
+				rate: 0
+			})
+		}
+	}
 	return { 
 		props: {
-				dbMetric: [dummyMetric] 
+				dbMetric: retrievedRatings
 			} 
 	};
 };
-
-// export const getStaticProps: GetStaticProps = async () => {
-//   const user = await prisma.user.create({
-//         data: {
-//           name: 'Monica',
-//           email: 'monica@prisma.io'
-//         },
-//       })
-//   const feed = await prisma.user.findMany({
-//     where: { name: "Monica" }
-//     });
-//   return { 
-//     props: { feed }, 
-//     revalidate: 10 
-//   }
-// }
-
-
 
 export default CardPage;

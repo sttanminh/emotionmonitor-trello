@@ -8,24 +8,17 @@ generator client {
 }
 
 model TrelloCard {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  id            String    @id @map("_id") @db.ObjectId
   task          String
-  label         String
-  metric        Metric[]
-  timestamp     DateTime
-  status        Status
-  reflection    String
-  owner         User     @relation(fields: [ownerId], references: [id])
-  ownerId       String   @db.ObjectId
   project       Project  @relation(fields: [projectId], references: [id])
   projectId     String   @db.ObjectId
+  ratings       Rating[]
 }
 
 model JiraCard {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  id            String    @id @map("_id") @db.ObjectId
   task          String
   label         String
-  metric        Metric[]
   timestamp     DateTime
   status        Status
   reflection    String
@@ -36,27 +29,41 @@ model JiraCard {
 }
 
 model User {
-  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  id                String      @id @map("_id") @db.ObjectId
   name              String
   email             String
-  trelloCards       TrelloCard[]
   jiraCards         JiraCard[]
   adminProjectIds   String[]    @db.ObjectId
   adminProjects     Project[]   @relation(fields: [adminProjectIds], references: [id])
+  ratings           Rating[]
 }
 
 model Project{
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  id            String    @id @map("_id") @db.ObjectId
   source        Source
+  name          String
   adminIds      String[]  @db.ObjectId
   adminList     User[]    @relation(fields: [adminIds], references: [id])
   trelloCards   TrelloCard[]
   jiraCards     JiraCard[]
 }
 
-type Metric{
-  name   String
-  score  Int
+model Metric{
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  name          String @unique
+  ratings       Rating[]
+}
+
+model Rating {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  score         Int
+  metricId      String @db.ObjectId
+  metric        Metric @relation(fields: [metricId], references: [id])
+  userId        String @db.ObjectId
+  user          User   @relation(fields: [userId], references: [id])
+  trelloCardId  String @db.ObjectId
+  trelloCard    TrelloCard @relation(fields: [trelloCardId], references: [id])
+  timestamp     DateTime
 }
 
 enum Status {
