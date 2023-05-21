@@ -2,10 +2,10 @@ import React, { useState } from "react";
 
 
 interface SliderProps {
-  id: string;  // Add this line
+  id: string,
   metric: string;
   rate: number;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>, id: string) => void;  // Modify this line
+  onChange: (event: React.ChangeEvent<HTMLInputElement>, metric: string) => void;  // Modify this line
 }
 
 const Slider: React.FC<SliderProps> = ({ id, metric,rate, onChange }) => {  // Modify this line
@@ -13,7 +13,7 @@ const Slider: React.FC<SliderProps> = ({ id, metric,rate, onChange }) => {  // M
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
-    onChange(event, id);  // Pass the id to the onChange function
+    onChange(event, metric);  // Pass the id to the onChange function
   };
 
   const getLevelColor = (level: string): string => {

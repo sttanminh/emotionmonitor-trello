@@ -9,60 +9,42 @@ import insertUser from "@/pages/api/member";
 import insertCard from "@/pages/api/card";
 
 interface Rating {
-  id: string;
-  name: string;
-  rate: number;
+  name: string,
+  rate: number,
+	metricId: string
 }
 
 interface Props {
-  metrics: Rating[];
+  dbMetric: Rating[],
+	card: string,
+	user: string,
+	board: string
 }
 
-function CardPage(dbMetrics: Rating[]) {
-  const [metrics, setMetrics] = useState<Rating[]>([]);
+
+function CardPage(dbMetrics: Props) {
+	const { dbMetric, card, user, board } = dbMetrics;
+  const [metrics, setMetrics] = useState<Rating[]>(dbMetric);
   // const [sliderValue, setSliderValue] = useState(1);
   const [textFieldValue, setTextFieldValue] = useState("");
 
   useEffect(() => {
     // TrelloPowerUp code has already been initialized from the imported file
   }, []);
-	console.log(dbMetrics);
-  // Generate dummy id for testing
-  function generateRandomString(length: number): string {
-    let result = "";
-    const characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-  }
-
-  // Add dummy metric
-  const addDummyMetric = () => {
-    const dummyMetric: Rating = {
-      id: generateRandomString(10),
-      name: "Dummy Metric",
-      rate: 0,
-    };
-    setMetrics([...metrics, dummyMetric]);
-  };
 
   // Get slider value
   const handleSliderChange = (
     event: React.ChangeEvent<HTMLInputElement>,
-    metricId: string
+    metricName: string
   ) => {
     const rate = parseInt(event.target.value, 10);
     const updatedMetrics = metrics.map((metric) => {
-      if (metric.id === metricId) {
+      if (metric.name === metricName) {
         return { ...metric, rate };
       }
       return metric;
     });
     setMetrics(updatedMetrics);
-    console.log(metrics);
   };
 
   // Get textField value
@@ -72,16 +54,20 @@ function CardPage(dbMetrics: Rating[]) {
     setTextFieldValue(event.target.value);
   };
 
-  // // Handle Save button click
-  // const handleSaveButtonClick = () => {
-  //   console.log(metrics);
-  //   console.log(textFieldValue);
-  // };
 	async function handleSaveButtonClick() {
+		var ratingArray = metrics.map((metric: Rating) => {
+			return {
+				score: metric.rate,
+				metricId: metric.metricId,
+				userId: user,
+				trelloCardId: card,
+				timestamp: new Date()
+			}
+		})
 		const response = await fetch('/api/rating', {
 			method: 'POST',
 			body: JSON.stringify({
-				//Add the ratings here with: score, userid, cardid, metricid, timestamp
+				ratings: ratingArray
 			}),
 			headers: {
 				'Content-Type': 'application/json'
@@ -93,13 +79,13 @@ function CardPage(dbMetrics: Rating[]) {
     <div className="App">
       <h1 className="title"> Emotimonitor </h1>
       <div className="SliderDiv">
-        {metrics
-          .map((metric) => (
-            <div key={metric.id} className="ColSlider">
+        {metrics.map((metric) => (
+            <div key={metric.name} className="ColSlider">
               <Slider
-                id={metric.id} metric={metric.name}
+								metric={metric.name}
                 rate={metric.rate}
-                onChange={(event) => handleSliderChange(event, metric.id)}
+								id = {metric.metricId}
+                onChange={(event) => handleSliderChange(event, metric.name)}
               ></Slider>
             </div>
           ))
@@ -117,7 +103,6 @@ function CardPage(dbMetrics: Rating[]) {
           ))}
       </div>
       <ReflectionBox onContentChange={handleTextFieldChange}></ReflectionBox>
-      <Button onClick={addDummyMetric} label="Add Metric"></Button>
       <Button onClick={handleSaveButtonClick} label="Save"></Button>
     </div> 
   );
@@ -131,9 +116,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 	if (boardId == undefined || memberId == undefined || cardId == undefined) {
 		throw new Error("Missing params");
 	}
-	await insertBoard(boardId);
-	await insertUser(memberId);
-	await insertCard(cardId);
+	var res = await insertBoard(boardId);
+	console.log(res)
+	res = await insertUser(memberId);
+	console.log(res)
+	res = await insertCard(cardId);
+	console.log(res)
 
 	var retrievedRatings: Rating[] = [];
 	const metrics = await prisma.metric.findMany();
@@ -151,21 +139,24 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 		})
 		if (result.length != 0) {
 			retrievedRatings.push({
-				id: "1234567890",
 				name: metric.name,
-				rate: result[0].score
+				rate: result[0].score,
+				metricId: metric.id
 			})
 		} else {
 			retrievedRatings.push({
-				id: "1234567890",
 				name: metric.name,
-				rate: 0
+				rate: 0,
+				metricId: metric.id
 			})
 		}
 	}
 	return { 
 		props: {
-				dbMetric: retrievedRatings
+				dbMetric: retrievedRatings,
+				card: cardId,
+				user: memberId,
+				board: boardId
 			} 
 	};
 };

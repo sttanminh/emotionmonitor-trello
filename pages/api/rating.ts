@@ -35,9 +35,9 @@ async function insertRating(ratings: Rating[]){
 				timestamp: rating.timestamp
 			}
 		});
-		await prisma.$disconnect();
-		return {message: "Rating created"}
 	}
+	await prisma.$disconnect();
+	return {message: "Rating created"}
 }
 
 export default handler;
