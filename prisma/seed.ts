@@ -22,22 +22,6 @@ async function main() {
       name: 'Workload'
     },
   })
-  const rating1 = await prisma.rating.create({
-    data: {
-      score: 2,
-      metricId: complexity.id,
-      timestamp: new Date()
-    },
-  })
-  await new Promise(f => setTimeout(f, 1000));
-  const rating2 = await prisma.rating.create({
-    data: {
-      score: 4,
-      metricId: complexity.id,
-      timestamp: new Date()
-    },
-  })
-
 }
 main()
   .then(async () => {

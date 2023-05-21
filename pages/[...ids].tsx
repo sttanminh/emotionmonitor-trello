@@ -2,8 +2,7 @@ import prisma from "@/lib/prisma";
 import { NextPage, GetServerSidePropsContext } from "next";
 import { useState, useEffect, useRef } from "react";
 import { Slider, ReflectionBox, Button } from "@/Components";
-import '../Components/powerup.js'
-import dotenv from 'dotenv';
+import '../Components/powerup.js';
 import insertBoard from "@/pages/api/board";
 import insertUser from "@/pages/api/member";
 import insertCard from "@/pages/api/card";
