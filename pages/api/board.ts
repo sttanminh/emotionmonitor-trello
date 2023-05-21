@@ -30,13 +30,16 @@ async function exist(args: Prisma.ProjectCountArgs) {
 }
 
 async function insertBoard(boardId: string){
+  console.log("Staring db call")
   const boardExist = await exist({
     where: {
       id: boardId
     }
   })
+  console.log("Finish db call")
   if (boardExist) {
     await prisma.$disconnect();
+    console.log("Disconnected")
     return {message: "Board exists"}
   }
 
