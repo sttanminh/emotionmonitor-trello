@@ -124,6 +124,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
 	var retrievedRatings: Rating[] = [];
 	const metrics = await prisma.metric.findMany();
+	console.log(metrics)
 	for await (var metric of metrics) {
 		var result = await prisma.rating.findMany({
 			where: {
@@ -136,6 +137,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 			}
 			,take: 1
 		})
+		console.log(result)
 		if (result.length != 0) {
 			retrievedRatings.push({
 				name: metric.name,
@@ -150,6 +152,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 			})
 		}
 	}
+	console.log(retrievedRatings)
 	return { 
 		props: {
 				dbMetric: retrievedRatings,
