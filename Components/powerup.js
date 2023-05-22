@@ -16,7 +16,7 @@ var btnCallback = async function display(t, options) {
         t.modal({
             title: "Emotimonitor",
             url: "https://extraordinary-paprenjak-38a4ca.netlify.app/" + params,
-    
+            fullscreen: true
         });
     } catch (error) {
         console.error('Error fetching card data: ', error);
