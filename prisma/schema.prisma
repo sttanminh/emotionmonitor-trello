@@ -31,7 +31,7 @@ model JiraCard {
 model User {
   id                String      @id @map("_id") @db.ObjectId
   name              String
-  email             String
+  email             String?
   jiraCards         JiraCard[]
   adminProjectIds   String[]    @db.ObjectId
   adminProjects     Project[]   @relation(fields: [adminProjectIds], references: [id])
