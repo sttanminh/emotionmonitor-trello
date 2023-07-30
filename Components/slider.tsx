@@ -1,21 +1,25 @@
 import React, { useState } from "react";
 
-
 interface SliderProps {
-  id: string,
+  id: string;
   metric: string;
   rate: number;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>, metric: string) => void;  // Modify this line
+  onChange: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    metric: string
+  ) => void; // Modify this line
 }
 
-const Slider: React.FC<SliderProps> = ({ id, metric,rate, onChange }) => {  // Modify this line
+const Slider: React.FC<SliderProps> = ({ id, metric, rate, onChange }) => {
+  // Modify this line
   const [value, setValue] = useState(String(rate));
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
-    onChange(event, metric);  // Pass the id to the onChange function
+    onChange(event, metric); // Pass the id to the onChange function
   };
 
+  // Change the slider color when slider value is changed
   const getLevelColor = (level: string): string => {
     switch (level) {
       case "1":
@@ -23,7 +27,7 @@ const Slider: React.FC<SliderProps> = ({ id, metric,rate, onChange }) => {  // M
       case "2":
         return "#ffa940"; // Orange
       case "3":
-        return "#333333"; // Yellow
+        return "#b8b800"; // Yellow
       case "4":
         return "#52c41a"; // Green
       case "5":
@@ -33,6 +37,7 @@ const Slider: React.FC<SliderProps> = ({ id, metric,rate, onChange }) => {  // M
     }
   };
 
+  // Change the emoji when slider value is changed
   const getLevelEmoji = (level: string): string => {
     switch (level) {
       case "1":
@@ -46,17 +51,17 @@ const Slider: React.FC<SliderProps> = ({ id, metric,rate, onChange }) => {  // M
       case "5":
         return "😀"; // Very happy
       default:
-        return "🎚️"; // Slider (default)
+        return "🤔"; // Slider (default)
     }
   };
 
   return (
-    // <div className="slider">
     <div className="slider-container">
       <h1>{metric}</h1>
       <div className="slider-emoji" style={{ fontSize: "50px" }}>
         {getLevelEmoji(value)}
       </div>
+      {/**Slider for emoji */}
       <input
         type="range"
         min="1"
@@ -74,7 +79,6 @@ const Slider: React.FC<SliderProps> = ({ id, metric,rate, onChange }) => {  // M
         <div className="scale-level">5</div>
       </div>
     </div>
-    // </div>
   );
 };
 

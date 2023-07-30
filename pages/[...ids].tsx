@@ -8,13 +8,13 @@ import insertUser from "@/pages/api/member";
 import insertCard from "@/pages/api/card";
 
 interface Rating {
-  name: string,
-  rate: number,
+	name: string,
+	rate: number,
 	metricId: string
 }
 
 interface Props {
-  dbMetric: Rating[],
+	dbMetric: Rating[],
 	card: string,
 	user: string,
 	board: string
@@ -23,35 +23,35 @@ interface Props {
 
 function CardPage(dbMetrics: Props) {
 	const { dbMetric, card, user, board } = dbMetrics;
-  const [metrics, setMetrics] = useState<Rating[]>(dbMetric);
-  // const [sliderValue, setSliderValue] = useState(1);
-  const [textFieldValue, setTextFieldValue] = useState("");
+	const [metrics, setMetrics] = useState<Rating[]>(dbMetric);
+	// const [sliderValue, setSliderValue] = useState(1);
+	const [textFieldValue, setTextFieldValue] = useState("");
 
-  useEffect(() => {
-    // TrelloPowerUp code has already been initialized from the imported file
-  }, []);
+	useEffect(() => {
+		// TrelloPowerUp code has already been initialized from the imported file
+	}, []);
 
-  // Get slider value
-  const handleSliderChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    metricName: string
-  ) => {
-    const rate = parseInt(event.target.value, 10);
-    const updatedMetrics = metrics.map((metric) => {
-      if (metric.name === metricName) {
-        return { ...metric, rate };
-      }
-      return metric;
-    });
-    setMetrics(updatedMetrics);
-  };
+	// Get slider value
+	const handleSliderChange = (
+		event: React.ChangeEvent<HTMLInputElement>,
+		metricName: string
+	) => {
+		const rate = parseInt(event.target.value, 10);
+		const updatedMetrics = metrics.map((metric) => {
+			if (metric.name === metricName) {
+				return { ...metric, rate };
+			}
+			return metric;
+		});
+		setMetrics(updatedMetrics);
+	};
 
-  // Get textField value
-  const handleTextFieldChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    setTextFieldValue(event.target.value);
-  };
+	// Get textField value
+	const handleTextFieldChange = (
+		event: React.ChangeEvent<HTMLTextAreaElement>
+	) => {
+		setTextFieldValue(event.target.value);
+	};
 
 	async function handleSaveButtonClick() {
 		var ratingArray = metrics.map((metric: Rating) => {
@@ -74,44 +74,44 @@ function CardPage(dbMetrics: Props) {
 		})
 	}
 
-  return (
-    <div className="App">
-      <h1 className="title"> Emotimonitor </h1>
-      <div className="SliderDiv">
-        {metrics.map((metric) => (
-            <div key={metric.name} className="ColSlider">
-              <Slider
-								metric={metric.name}
-                rate={metric.rate}
-								id = {metric.metricId}
-                onChange={(event) => handleSliderChange(event, metric.name)}
-              ></Slider>
-            </div>
-          ))
-          .reduce((rows: JSX.Element[][], col, index) => {
-            if (index % 3 === 0) {
-              rows.push([]);
-            }
-            rows[rows.length - 1].push(col);
-            return rows;
-          }, [])
-          .map((row, rowIndex) => (
-            <div key={rowIndex} className="SliderDiv">
-              {row}
-            </div>
-          ))}
-      </div>
-      <ReflectionBox onContentChange={handleTextFieldChange}></ReflectionBox>
-      <Button onClick={handleSaveButtonClick} label="Save"></Button>
-    </div> 
-  );
+	return (
+		<div className="App">
+			<h1 className="title"> Emotimonitor </h1>
+			<div className="SliderDiv">
+				{metrics.map((metric) => (
+					<div key={metric.name} className="ColSlider">
+						<Slider
+							metric={metric.name}
+							rate={metric.rate}
+							id={metric.metricId}
+							onChange={(event) => handleSliderChange(event, metric.name)}
+						></Slider>
+					</div>
+				))
+					.reduce((rows: JSX.Element[][], col, index) => {
+						if (index % 3 === 0) {
+							rows.push([]);
+						}
+						rows[rows.length - 1].push(col);
+						return rows;
+					}, [])
+					.map((row, rowIndex) => (
+						<div key={rowIndex} className="SliderDiv">
+							{row}
+						</div>
+					))}
+			</div>
+			<ReflectionBox onContentChange={handleTextFieldChange}></ReflectionBox>
+			<Button onClick={handleSaveButtonClick} label="Save"></Button>
+		</div>
+	);
 };
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
 	const { ids } = context.query
-	var cardId = ids?ids[0]:undefined;
-	var memberId = ids?ids[1]:undefined;
-	var boardId = ids?ids[2]:undefined;
+	var cardId = ids ? ids[0] : undefined;
+	var memberId = ids ? ids[1] : undefined;
+	var boardId = ids ? ids[2] : undefined;
 	if (boardId == undefined || memberId == undefined || cardId == undefined) {
 		throw new Error("Missing params");
 	}
@@ -132,10 +132,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 				trelloCardId: cardId,
 				metricId: metric.id
 			}
-			,orderBy: {
+			, orderBy: {
 				timestamp: 'desc'
 			}
-			,take: 1
+			, take: 1
 		})
 		console.log(result)
 		if (result.length != 0) {
@@ -153,13 +153,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 		}
 	}
 	console.log(retrievedRatings)
-	return { 
+	return {
 		props: {
-				dbMetric: retrievedRatings,
-				card: cardId,
-				user: memberId,
-				board: boardId
-			} 
+			dbMetric: retrievedRatings,
+			card: cardId,
+			user: memberId,
+			board: boardId
+		}
 	};
 };
 

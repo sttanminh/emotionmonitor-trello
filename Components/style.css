@@ -41,9 +41,10 @@
 }
 
 .slider:hover {
-  opacity: 1;
+  opacity: 2;
 }
 
+/*This control the dragable circle object */
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
@@ -51,15 +52,6 @@
   height: 20px;
   border-radius: 50%;
   background: #ffffff;
-  cursor: pointer;
-  border: 1px solid #ccc;
-}
-
-.slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #fff;
   cursor: pointer;
   border: 1px solid #ccc;
 }
@@ -75,8 +67,8 @@
 }
 
 .slider.level-3::-webkit-slider-thumb {
-  background: #ffff00;
-  border-color: #ffff00;
+  background: #e4e400;
+  border-color: #e4e400;
 }
 
 .slider.level-4::-webkit-slider-thumb {
