@@ -1,15 +1,15 @@
 /* slider css */
 * {
-  font-family: "Open Sans", sans-serif;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
 }
 
 .slider-container {
   background-color: #f8f8f8;
   padding: 20px;
-  /* border-radius: 3px; */
+  border-radius: 5px;
   /* border-color: #000000; */
   border: 0.5px solid #d1d1d1;
-  box-shadow: 3px 6px #cccccc;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
   width: fit-content;
   position: relative;
   transition: all ease 0.5s;
@@ -20,8 +20,7 @@
 }
 
 .slider-container:hover {
-  box-shadow: 5px 10px #969696;
-  top: -4px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 10px;
 }
 
 .slider {

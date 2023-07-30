@@ -61,6 +61,18 @@ const Slider: React.FC<SliderProps> = ({ id, metric, rate, onChange }) => {
       <div className="slider-emoji" style={{ fontSize: "50px" }}>
         {getLevelEmoji(value)}
       </div>
+      {/**Slider for metric level (high, medium, low) */}
+      <input
+        type="range"
+        min="1"
+        max="3"
+        className="slider"
+      />
+      <div className="slider-scale">
+        <div className="scale-level">Low</div>
+        <div className="scale-level">Medium</div>
+        <div className="scale-level">High</div>
+      </div>
       {/**Slider for emoji */}
       <input
         type="range"
