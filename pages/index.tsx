@@ -85,7 +85,7 @@ const Home: NextPage<Props> = () => {
             <div key={metric.id} className="ColSlider">
               <Slider
                 id={metric.id} metric={metric.name}
-                rate={metric.rate}
+                emojiRate={metric.rate}
                 onChange={(event) => handleSliderChange(event, metric.id)}
               ></Slider>
             </div>

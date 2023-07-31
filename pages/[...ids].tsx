@@ -82,7 +82,7 @@ function CardPage(dbMetrics: Props) {
 					<div key={metric.name} className="ColSlider">
 						<Slider
 							metric={metric.name}
-							rate={metric.rate}
+							emojiRate={metric.rate}
 							id={metric.metricId}
 							onChange={(event) => handleSliderChange(event, metric.name)}
 						></Slider>
