@@ -9,7 +9,8 @@ import '../Components/powerup.js'
 interface Metric {
   id: string;
   name: string;
-  rate: number;
+  emojiRate: number; // rate -> emojiRate
+  levelRate: number; // newly added for new slider
 }
 
 interface Props {
@@ -42,7 +43,8 @@ const Home: NextPage<Props> = () => {
     const dummyMetric: Metric = {
       id: generateRandomString(10),
       name: "Dummy Metric",
-      rate: 0,
+      emojiRate: 0, // rate -> emojiRate
+      levelRate: 0, // newly added
     };
     setMetrics([...metrics, dummyMetric]);
   };
@@ -52,10 +54,11 @@ const Home: NextPage<Props> = () => {
     event: React.ChangeEvent<HTMLInputElement>,
     metricId: string
   ) => {
-    const rate = parseInt(event.target.value, 10);
+    const emojiRate = parseInt(event.target.value, 10); // rate -> emojiRate
+    const levelRate = parseInt(event.target.value, 10); // newly added
     const updatedMetrics = metrics.map((metric) => {
       if (metric.id === metricId) {
-        return { ...metric, rate };
+        return { ...metric, emojiRate: emojiRate, levelRate: levelRate}; 
       }
       return metric;
     });
@@ -85,7 +88,8 @@ const Home: NextPage<Props> = () => {
             <div key={metric.id} className="ColSlider">
               <Slider
                 id={metric.id} metric={metric.name}
-                emojiRate={metric.rate}
+                emojiRate={metric.emojiRate} // metric.rate -> metric.emojiRate
+                levelRate={metric.levelRate} //newly added
                 onChange={(event) => handleSliderChange(event, metric.id)}
               ></Slider>
             </div>

@@ -4,16 +4,17 @@ interface SliderProps {
   id: string;
   metric: string;
   emojiRate: number;
+  levelRate: number;
   onChange: (
     event: React.ChangeEvent<HTMLInputElement>,
     metric: string
   ) => void; // Modify this line
 }
 
-const Slider: React.FC<SliderProps> = ({ id, metric, emojiRate, onChange }) => {
+const Slider: React.FC<SliderProps> = ({ id, metric, emojiRate, levelRate, onChange }) => {
   // Modify this line
   const [emojiValue, setEmojiValue] = useState(String(emojiRate));
-  const [levelValue, setLevelValue] = useState("0")
+  const [levelValue, setLevelValue] = useState(String(levelRate));
 
 
   const handleEmojiChange = (event: React.ChangeEvent<HTMLInputElement>) => {
