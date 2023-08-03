@@ -1,4 +1,3 @@
-//api/board
 import type { NextApiRequest, NextApiResponse } from 'next';
 import dotenv from 'dotenv';
 import prisma from "@/lib/prisma";

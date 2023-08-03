@@ -1,4 +1,3 @@
-//api/board
 import type { NextApiRequest, NextApiResponse } from 'next';
 import dotenv from 'dotenv';
 import prisma from "@/lib/prisma";
@@ -61,7 +60,7 @@ async function insertCard(cardId: string){
 	await prisma.trelloCard.upsert({
 		create: {
 			id: cardId,
-			task: cardJson?cardJson.name:"",
+			taskName: cardJson?cardJson.name:"",
 			projectId: cardJson?cardJson.idBoard:""
 		},
 		update: {},

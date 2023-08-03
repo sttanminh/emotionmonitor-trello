@@ -1,29 +1,32 @@
-import prisma from "@/lib/prisma";
-import { NextPage, GetServerSidePropsContext } from "next";
+import { GetServerSidePropsContext } from "next";
 import { useState, useEffect, useRef } from "react";
 import { Slider, ReflectionBox, Button } from "@/Components";
 import '../Components/powerup.js';
 import insertBoard from "@/pages/api/board";
 import insertUser from "@/pages/api/member";
 import insertCard from "@/pages/api/card";
+import { RatingWithoutSubmission, Submission, getLatestSubmission } from "@/pages/api/submission";
+import { getMetricsByProjectId } from "@/pages/api/metric";
 
-interface Rating {
-	name: string,
-	rate: number,
+
+type RatingDisplayInfo = {
+	metricName: string,
+	emoScore: number,
+	levelScore: number,
 	metricId: string
 }
 
-interface Props {
-	dbMetric: Rating[],
+type Props = {
+	latestRatings: RatingDisplayInfo[],
 	card: string,
 	user: string,
 	board: string
 }
 
 
-function CardPage(dbMetrics: Props) {
-	const { dbMetric, card, user, board } = dbMetrics;
-	const [metrics, setMetrics] = useState<Rating[]>(dbMetric);
+function CardPage(data: Props) {
+	const { latestRatings, card, user, board } = data;
+	const [metrics, setMetrics] = useState<RatingDisplayInfo[]>(latestRatings);
 	// const [sliderValue, setSliderValue] = useState(1);
 	const [textFieldValue, setTextFieldValue] = useState("");
 
@@ -36,10 +39,10 @@ function CardPage(dbMetrics: Props) {
 		event: React.ChangeEvent<HTMLInputElement>,
 		metricName: string
 	) => {
-		const rate = parseInt(event.target.value, 10);
+		const emoScore = parseInt(event.target.value, 10);
 		const updatedMetrics = metrics.map((metric) => {
-			if (metric.name === metricName) {
-				return { ...metric, rate };
+			if (metric.metricName === metricName) {
+				return { ...metric, emoScore };
 			}
 			return metric;
 		});
@@ -54,24 +57,30 @@ function CardPage(dbMetrics: Props) {
 	};
 
 	async function handleSaveButtonClick() {
-		var ratingArray = metrics.map((metric: Rating) => {
+		var ratingArray: RatingWithoutSubmission[] = metrics.map((metric: RatingDisplayInfo) => {
 			return {
-				score: metric.rate,
-				metricId: metric.metricId,
-				userId: user,
-				trelloCardId: card,
-				timestamp: new Date()
+				emoScore: metric.emoScore,
+				level: metric.levelScore,
+				metricId: metric.metricId
 			}
 		})
-		const response = await fetch('/api/rating', {
+		var submissionData: Submission = {
+			reflection: textFieldValue,
+			ratings: ratingArray,
+			timestamp: new Date(),
+			userId: user,
+			trelloCardId: card
+		}
+		const response = await fetch('/api/submission', {
 			method: 'POST',
 			body: JSON.stringify({
-				ratings: ratingArray
+				submission: submissionData
 			}),
 			headers: {
 				'Content-Type': 'application/json'
 			}
 		})
+		console.log(response)
 	}
 
 	return (
@@ -79,12 +88,13 @@ function CardPage(dbMetrics: Props) {
 			<h1 className="title"> Emotimonitor </h1>
 			<div className="SliderDiv">
 				{metrics.map((metric) => (
-					<div key={metric.name} className="ColSlider">
+					<div key={metric.metricName} className="ColSlider">
 						<Slider
-							metric={metric.name}
-							emojiRate={metric.rate}
+							metric={metric.metricName}
+							emojiRate={metric.emoScore}
+							levelRate={metric.levelScore}
 							id={metric.metricId}
-							onChange={(event) => handleSliderChange(event, metric.name)}
+							onChange={(event) => handleSliderChange(event, metric.metricName)}
 						></Slider>
 					</div>
 				))
@@ -122,44 +132,35 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 	res = await insertCard(cardId);
 	console.log(res)
 
-	var retrievedRatings: Rating[] = [];
-	const metrics = await prisma.metric.findMany();
-	console.log(metrics)
-	for await (var metric of metrics) {
-		var result = await prisma.rating.findMany({
-			where: {
-				userId: memberId,
-				trelloCardId: cardId,
-				metricId: metric.id
+	var latestSubmission = await getLatestSubmission(memberId, cardId)
+	var ratingInfo: RatingDisplayInfo[] = [];
+	if (latestSubmission.length != 0) {
+		ratingInfo = latestSubmission[0].ratings.map((rating) => {
+			return {
+				metricName: rating.metric.name,
+				emoScore: rating.emoScore,
+				levelScore: rating.level,
+				metricId: rating.metricId
 			}
-			, orderBy: {
-				timestamp: 'desc'
-			}
-			, take: 1
 		})
-		console.log(result)
-		if (result.length != 0) {
-			retrievedRatings.push({
-				name: metric.name,
-				rate: result[0].score,
+	} else {
+		const metrics = await getMetricsByProjectId(boardId)
+		ratingInfo = metrics.map((metric) => {
+			return {
+				metricName: metric.name,
+				emoScore: 0,
+				levelScore: 2,
 				metricId: metric.id
-			})
-		} else {
-			retrievedRatings.push({
-				name: metric.name,
-				rate: 0,
-				metricId: metric.id
-			})
-		}
+			}
+		})
 	}
-	console.log(retrievedRatings)
-	return {
+	return { 
 		props: {
-			dbMetric: retrievedRatings,
-			card: cardId,
-			user: memberId,
-			board: boardId
-		}
+				latestRatings: ratingInfo,
+				card: cardId,
+				user: memberId,
+				board: boardId
+			} 
 	};
 };
 

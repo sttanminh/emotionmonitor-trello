@@ -1,8 +1,8 @@
-//api/board
 import type { NextApiRequest, NextApiResponse } from 'next';
 import dotenv from 'dotenv';
 import prisma from "@/lib/prisma";
-import { Prisma } from '@prisma/client';
+import { Metric, Prisma } from '@prisma/client';
+import { getDefaultMetrics } from './metric';
 
 dotenv.config();
 const apiKey =  process.env.API_KEY!;
@@ -30,13 +30,11 @@ async function exist(args: Prisma.ProjectCountArgs) {
 }
 
 async function insertBoard(boardId: string){
-  console.log("Staring db call")
   const boardExist = await exist({
     where: {
       id: boardId
     }
   })
-  console.log("Finish db call")
   if (boardExist) {
     await prisma.$disconnect();
     console.log("Disconnected")
@@ -54,7 +52,7 @@ async function insertBoard(boardId: string){
   })
   .then((response: Response) => {
     console.log(
-      `Response: ${response.status} ${response.statusText}`
+      `Trello response: ${response.status} ${response.statusText}`
     );
     return response.text();
   })
@@ -64,12 +62,20 @@ async function insertBoard(boardId: string){
   })
   .catch((err: Error) => console.error(err));
 
+  var defaultMetrics = await getDefaultMetrics();
+  var defaultMetricIds = defaultMetrics.map((metric: Metric) => {
+    return {"id": metric.id}
+  })
+
   await prisma.project.create({
     data: {
       id: boardId,
       source: "TRELLO",
       name: boardJson?boardJson["name"]:"",
       adminIds: admins,
+      metrics: {
+        connect: defaultMetricIds
+      }
     }
   });
   await prisma.$disconnect();
