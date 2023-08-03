@@ -64,10 +64,11 @@ function CardPage(data: Props) {
 				metricId: metric.metricId
 			}
 		})
+		var dateUTC = new Date()
 		var submissionData: Submission = {
 			reflection: textFieldValue,
 			ratings: ratingArray,
-			timestamp: new Date(),
+			timestamp: new Date(dateUTC.getTime() - dateUTC.getTimezoneOffset()*60*1000),
 			userId: user,
 			trelloCardId: card
 		}
