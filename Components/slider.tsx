@@ -2,7 +2,7 @@ import React, { use, useState } from "react";
 
 interface SliderProps {
   id: string;
-  test: string;
+  metric: string;
   emojiRate: number;
   levelRate: number;
   onLevelChange: (
@@ -15,7 +15,7 @@ interface SliderProps {
   ) => void;
 }
 
-const Slider: React.FC<SliderProps> = ({ id, test: metric, emojiRate, levelRate, onLevelChange, onEmojiChange }) => {
+const Slider: React.FC<SliderProps> = ({ id, metric, emojiRate, levelRate, onLevelChange, onEmojiChange }) => {
   // Modify this line
   const [emojiValue, setEmojiValue] = useState(String(emojiRate));
   const [levelValue, setLevelValue] = useState(String(levelRate));
