@@ -45,7 +45,7 @@ function CardPage(data: Props) {
 	}
 
 	// Get emoji value
-	const handleSEmojiChange = (
+	const handleEmojiChange = (
 		event: React.ChangeEvent<HTMLInputElement>,
 		metricName: string
 	) => {
@@ -114,7 +114,7 @@ function CardPage(data: Props) {
 							emojiRate={metric.emoScore}
 							levelRate={metric.levelScore}
 							id={metric.metricId}
-							onEmojiChange={(event) => {handleSEmojiChange(event, metric.metricName)}}
+							onEmojiChange={(event) => {handleEmojiChange(event, metric.metricName)}}
 							onLevelChange={(event) => {handleLevelChange(event, metric.metricName)}}
 						></Slider>
 					</div>
