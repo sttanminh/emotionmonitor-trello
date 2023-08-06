@@ -2,29 +2,32 @@ import React, { use, useState } from "react";
 
 interface SliderProps {
   id: string;
-  metric: string;
+  test: string;
   emojiRate: number;
   levelRate: number;
-  onChange: (
+  onLevelChange: (
     event: React.ChangeEvent<HTMLInputElement>,
     metric: string
-  ) => void; // Modify this line
+  ) => void; 
+  onEmojiChange: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    metric: string
+  ) => void;
 }
 
-const Slider: React.FC<SliderProps> = ({ id, metric, emojiRate, levelRate, onChange }) => {
+const Slider: React.FC<SliderProps> = ({ id, test: metric, emojiRate, levelRate, onLevelChange, onEmojiChange }) => {
   // Modify this line
   const [emojiValue, setEmojiValue] = useState(String(emojiRate));
   const [levelValue, setLevelValue] = useState(String(levelRate));
 
+  const handleLevelChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setLevelValue(event.target.value);
+    onLevelChange(event, metric);
+  };
 
   const handleEmojiChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmojiValue(event.target.value);
-    onChange(event, metric); // Pass the id to the onChange function
-  };
-
-  const handleLevelChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setLevelValue(event.target.value);
-    onChange(event, metric);
+    onEmojiChange(event, metric); 
   };
 
   // Change the slider color when slider value is changed

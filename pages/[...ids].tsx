@@ -7,6 +7,7 @@ import insertUser from "@/pages/api/member";
 import insertCard from "@/pages/api/card";
 import { RatingWithoutSubmission, Submission, getLatestSubmission } from "@/pages/api/submission";
 import { getMetricsByProjectId } from "@/pages/api/metric";
+import { parse } from "path";
 
 
 type RatingDisplayInfo = {
@@ -34,20 +35,38 @@ function CardPage(data: Props) {
 		// TrelloPowerUp code has already been initialized from the imported file
 	}, []);
 
-	// Get slider value
-	const handleSliderChange = (
+	// Get level value
+	const handleLevelChange = (
 		event: React.ChangeEvent<HTMLInputElement>,
 		metricName: string
 	) => {
-		const emoScore = parseInt(event.target.value, 10);
+		const levelScore = parseInt(event.target.value, 10);
+		updateMetrics(metricName, {levelRate: levelScore});
+	}
+
+	// Get emoji value
+	const handleSEmojiChange = (
+		event: React.ChangeEvent<HTMLInputElement>,
+		metricName: string
+	) => {
+		const emojiScore = parseInt(event.target.value, 10);
+		updateMetrics(metricName, {emojiRate: emojiScore});
+	}
+
+	// Function to update the emojiScore and levelScore
+	const updateMetrics = (
+		metricName: string,
+		changes: object
+	) => {
 		const updatedMetrics = metrics.map((metric) => {
 			if (metric.metricName === metricName) {
-				return { ...metric, emoScore };
+				return {...metric, ...changes}
 			}
 			return metric;
-		});
+		})
+		console.log(updatedMetrics);
 		setMetrics(updatedMetrics);
-	};
+	}
 
 	// Get textField value
 	const handleTextFieldChange = (
@@ -95,7 +114,8 @@ function CardPage(data: Props) {
 							emojiRate={metric.emoScore}
 							levelRate={metric.levelScore}
 							id={metric.metricId}
-							onChange={(event) => handleSliderChange(event, metric.metricName)}
+							onEmojiChange={(event) => {handleSEmojiChange(event, metric.metricName)}}
+							onLevelChange={(event) => {handleLevelChange(event, metric.metricName)}}
 						></Slider>
 					</div>
 				))
@@ -150,7 +170,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 			return {
 				metricName: metric.name,
 				emoScore: 0,
-				levelScore: 2,
+				levelScore: 0,
 				metricId: metric.id
 			}
 		})

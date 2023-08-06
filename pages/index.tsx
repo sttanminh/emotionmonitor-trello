@@ -1,10 +1,11 @@
 import prisma from "@/lib/prisma";
 import { GetStaticProps, NextPage } from "next";
 import { User } from "@prisma/client";
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Row, Col } from "react-bootstrap";
 import { Slider, ReflectionBox, Button } from "@/Components";
 import '../Components/powerup.js'
+import { eventNames } from "process";
 
 interface Metric {
   id: string;
@@ -19,7 +20,6 @@ interface Props {
 
 const Home: NextPage<Props> = () => {
   const [metrics, setMetrics] = useState<Metric[]>([]);
-  // const [sliderValue, setSliderValue] = useState(1);
   const [textFieldValue, setTextFieldValue] = useState("");
 
   useEffect(() => {
@@ -49,22 +49,38 @@ const Home: NextPage<Props> = () => {
     setMetrics([...metrics, dummyMetric]);
   };
 
-  // Get slider value
-  const handleSliderChange = (
+  // Get level value
+  const handleLevelChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     metricId: string
   ) => {
-    const emojiRate = parseInt(event.target.value, 10); // rate -> emojiRate
-    const levelRate = parseInt(event.target.value, 10); // newly added
-    const updatedMetrics = metrics.map((metric) => {
+    const levelRate = parseInt(event.target.value, 10);
+    updateMetrics(metricId, {levelRate})
+  }
+
+  // Get emoji value
+  const handleEmojiChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    metricId: string
+  ) => {
+    const emojiRate = parseInt(event.target.value, 10);
+    updateMetrics(metricId, {emojiRate})
+  }
+
+  const updateMetrics = (
+    metricId: string,
+    changes: {}
+  ) => {
+    const updatedMetrics = metrics.map((metric: Metric) => {
       if (metric.id === metricId) {
-        return { ...metric, emojiRate: emojiRate, levelRate: levelRate}; 
+        return {...metric, ...changes}
       }
       return metric;
-    });
+    })
+    console.log(updatedMetrics);
     setMetrics(updatedMetrics);
-    console.log(metrics);
-  };
+
+  }
 
   // Get textField value
   const handleTextFieldChange = (
@@ -87,10 +103,12 @@ const Home: NextPage<Props> = () => {
           .map((metric) => (
             <div key={metric.id} className="ColSlider">
               <Slider
-                id={metric.id} metric={metric.name}
+                id={metric.id} 
+                metric={metric.name}
                 emojiRate={metric.emojiRate} // metric.rate -> metric.emojiRate
                 levelRate={metric.levelRate} //newly added
-                onChange={(event) => handleSliderChange(event, metric.id)}
+                onEmojiChange={(event) => {handleEmojiChange(event, metric.id)}}
+                onLevelChange={(event) => {handleLevelChange(event, metric.id)}}
               ></Slider>
             </div>
           ))
@@ -113,14 +131,6 @@ const Home: NextPage<Props> = () => {
     </div> 
   );
 };
-
-
-
-
-
-
-
-
 
 // export const getStaticProps: GetStaticProps = async () => {
 //   const user = await prisma.user.create({
