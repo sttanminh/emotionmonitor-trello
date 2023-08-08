@@ -41,7 +41,7 @@ function CardPage(data: Props) {
 		metricName: string
 	) => {
 		const levelScore = parseInt(event.target.value, 10);
-		updateMetrics(metricName, {levelRate: levelScore});
+		updateMetrics(metricName, {levelScore: levelScore});
 	}
 
 	// Get emoji value
@@ -50,7 +50,7 @@ function CardPage(data: Props) {
 		metricName: string
 	) => {
 		const emojiScore = parseInt(event.target.value, 10);
-		updateMetrics(metricName, {emojiRate: emojiScore});
+		updateMetrics(metricName, {emojiScore: emojiScore});
 	}
 
 	// Function to update the emojiScore and levelScore
