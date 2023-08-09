@@ -28,11 +28,10 @@ async function insertRating(ratings: Rating[]){
 	for await (var rating of ratings) {
 		await prisma.rating.create({
 			data: {
-				score: rating.score,
+				emoScore: rating.emoScore,
 				metricId: rating.metricId,
-				userId: rating.userId,
-				trelloCardId: rating.trelloCardId,
-				timestamp: rating.timestamp
+				level: rating.level,
+				submissionId: rating.submissionId,
 			}
 		});
 	}

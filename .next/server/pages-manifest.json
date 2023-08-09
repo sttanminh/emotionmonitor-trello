@@ -1,8 +1,14 @@
 {
   "/_app": "pages/_app.js",
   "/_document": "pages/_document.js",
-  "/api/hello": "pages/api/hello.js",
+  "/api/board": "pages/api/board.js",
+  "/api/member": "pages/api/member.js",
+  "/api/card": "pages/api/card.js",
+  "/api/rating": "pages/api/rating.js",
+  "/api/submission": "pages/api/submission.js",
+  "/api/metric": "pages/api/metric.js",
   "/_error": "pages/_error.js",
   "/": "pages/index.html",
+  "/[...ids]": "pages/[...ids].js",
   "/404": "pages/404.html"
 }
