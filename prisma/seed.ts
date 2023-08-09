@@ -26,32 +26,32 @@ async function main() {
     },
   })
 
-  const submissionOne = await prisma.submission.create({
-    data: {reflection: "this card is written terribly", timestamp: new Date(), trelloCardId: '64424477e1b9b792905c2a68', userId: '5f29ee8a6706421502f785d6'},
-  })
+//   const submissionOne = await prisma.submission.create({
+//     data: {reflection: "this card is written terribly", timestamp: new Date(), trelloCardId: '64424477e1b9b792905c2a68', userId: '5f29ee8a6706421502f785d6'},
+//   })
   
-  const submissionTwo = await prisma.submission.create({
-    data: {reflection: "this card is written less terribly", timestamp: new Date(), trelloCardId: '64424477e1b9b792905c2a68', userId: '5f29ee8a6706421502f785d6'},
-  })
+//   const submissionTwo = await prisma.submission.create({
+//     data: {reflection: "this card is written less terribly", timestamp: new Date(), trelloCardId: '64424477e1b9b792905c2a68', userId: '5f29ee8a6706421502f785d6'},
+//   })
 
-  const rating1 = await prisma.rating.create({ 
-    data: {emoScore: 1, level: 1, metricId: complexity.id, submissionId: submissionOne.id}
-  })
-  const rating2 = await prisma.rating.create({ 
-    data: {emoScore: 3, level: 2, metricId: complexity.id, submissionId: submissionTwo.id}
-  })
-  const rating3 = await prisma.rating.create({ 
-    data: {emoScore: 1, level: 1, metricId: difficulty.id, submissionId: submissionOne.id}
-  })
-  const rating4 = await prisma.rating.create({ 
-    data: {emoScore: 3, level: 3, metricId: difficulty.id, submissionId: submissionTwo.id}
-  })
-  const rating5 = await prisma.rating.create({ 
-    data: {emoScore: 1, level: 1, metricId: workload.id, submissionId: submissionOne.id}
-  })
-  const rating6 = await prisma.rating.create({ 
-    data: {emoScore: 3, level: 1, metricId: workload.id, submissionId: submissionTwo.id}
-  })
+//   const rating1 = await prisma.rating.create({ 
+//     data: {emoScore: 1, level: 1, metricId: complexity.id, submissionId: submissionOne.id}
+//   })
+//   const rating2 = await prisma.rating.create({ 
+//     data: {emoScore: 3, level: 2, metricId: complexity.id, submissionId: submissionTwo.id}
+//   })
+//   const rating3 = await prisma.rating.create({ 
+//     data: {emoScore: 1, level: 1, metricId: difficulty.id, submissionId: submissionOne.id}
+//   })
+//   const rating4 = await prisma.rating.create({ 
+//     data: {emoScore: 3, level: 3, metricId: difficulty.id, submissionId: submissionTwo.id}
+//   })
+//   const rating5 = await prisma.rating.create({ 
+//     data: {emoScore: 1, level: 1, metricId: workload.id, submissionId: submissionOne.id}
+//   })
+//   const rating6 = await prisma.rating.create({ 
+//     data: {emoScore: 3, level: 1, metricId: workload.id, submissionId: submissionTwo.id}
+//   })
   
 }
 main()
