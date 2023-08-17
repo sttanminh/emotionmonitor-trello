@@ -20,6 +20,35 @@
   margin: 0 0px;
 }
 
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.header h1 {
+  flex: 1;
+  margin-left: 20px; /*20px is the size of the tool tip*/
+}
+
+.header svg:hover + .tooltip {
+  cursor: pointer;
+  opacity: 1;
+}
+
+.tooltip {
+  opacity: 0; /*hide by default */
+  border-radius: 5px;
+  padding: 10px;
+  transform: translateY(60%) translateX(54%); /*move the tooltip down and to the right*/
+  transition: opacity 0.3s ease-in-out;
+  width: 270px;
+  position: absolute;
+  z-index: 10;
+  background-color: #b2fff0;
+}
+
 .slider-container:hover {
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 10px;
 }
@@ -53,7 +82,7 @@
   border-radius: 50%;
   background: #ffffff;
   cursor: pointer;
-  border: 2px solid #ccc;
+  border: 1px solid #ccc;
 }
 
 .slider.level-1::-webkit-slider-thumb {
