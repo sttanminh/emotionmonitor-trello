@@ -1,6 +1,6 @@
 import { GetServerSidePropsContext } from "next";
 import { useState, useEffect, useRef } from "react";
-import { Slider, ReflectionBox, Button } from "@/Components";
+import { Slider, ReflectionBox, Button, Snackbar } from "@/Components";
 import '../Components/powerup.js';
 import insertBoard from "@/pages/api/board";
 import insertUser from "@/pages/api/member";
@@ -30,10 +30,18 @@ function CardPage(data: Props) {
 	const [metrics, setMetrics] = useState<RatingDisplayInfo[]>(latestRatings);
 	// const [sliderValue, setSliderValue] = useState(1);
 	const [textFieldValue, setTextFieldValue] = useState("");
+	const [snackbarVisibility, setSnackbarVisibility] = useState(false);
 
 	useEffect(() => {
 		// TrelloPowerUp code has already been initialized from the imported file
 	}, []);
+
+	const showSnackBar = () => {
+		setSnackbarVisibility(true);
+		setTimeout(() => {
+			setSnackbarVisibility(false);
+		}, 3500);
+	}
 
 	// Get level value
 	const handleLevelChange = (
@@ -76,6 +84,7 @@ function CardPage(data: Props) {
 	};
 
 	async function handleSaveButtonClick() {
+		showSnackBar();
 		var ratingArray: RatingWithoutSubmission[] = metrics.map((metric: RatingDisplayInfo) => {
 			return {
 				emoScore: metric.emoScore,
@@ -134,6 +143,7 @@ function CardPage(data: Props) {
 			</div>
 			<ReflectionBox onContentChange={handleTextFieldChange}></ReflectionBox>
 			<Button onClick={handleSaveButtonClick} label="Save"></Button>
+			<Snackbar visible={snackbarVisibility}></Snackbar>
 		</div>
 	);
 };

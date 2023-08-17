@@ -1,6 +1,7 @@
 /* slider css */
 * {
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
 }
 
 .slider-container {
@@ -52,7 +53,7 @@
   border-radius: 50%;
   background: #ffffff;
   cursor: pointer;
-  border: 1px solid #ccc;
+  border: 2px solid #ccc;
 }
 
 .slider.level-1::-webkit-slider-thumb {
@@ -180,4 +181,28 @@
 .custom-button:hover {
   background-color: #009b22;
   cursor: pointer;
+}
+
+.snackbar-container {
+  display: flex;
+  margin: 40px;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.snackbar {
+  display: flex;
+  flex-direction: row;
+  padding: 20px;
+  background-color: #b2fff0;
+  border-style: solid;
+  border-width: 5px 0px 0px 0px;
+  border-color: #00c09a;
+  border-radius: 0px 0px 5px 5px;
+  box-shadow: #f0f0f0 0px 2px 2px 2px;
+}
+
+.snackbar span {
+  text-align: center;
+  color: black;
 }
