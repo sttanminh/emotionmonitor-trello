@@ -158,16 +158,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 	if (boardId == undefined || memberId == undefined || cardId == undefined) {
 		throw new Error("Missing params");
 	}
-	console.log("Inserting board")
-	console.log(new Date())
+	
 	var res = await insertBoard(boardId);
 	console.log(res)
-	console.log("Inserting member")
-	console.log(new Date())
 	res = await insertUser(memberId);
 	console.log(res)
-	console.log("Inserting card")
-	console.log(new Date())
 	res = await insertCard(cardId);
 	console.log(res)
 

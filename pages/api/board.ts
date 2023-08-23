@@ -30,6 +30,8 @@ async function exist(args: Prisma.ProjectCountArgs) {
 }
 
 async function insertBoard(boardId: string){
+  console.log("Check if board exists")
+	console.log(new Date())
   const boardExist = await exist({
     where: {
       id: boardId
@@ -44,6 +46,8 @@ async function insertBoard(boardId: string){
   var boardJson;
   var admins;
   
+  console.log("Trello API call")
+	console.log(new Date())
   await fetch(`https://api.trello.com/1/boards/${boardId}?memberships=admin&key=${apiKey}&token=${apiToken}`, {
     method: 'GET',
     headers: {
@@ -67,6 +71,8 @@ async function insertBoard(boardId: string){
     return {"id": metric.id}
   })
 
+  console.log("Create board")
+	console.log(new Date())
   await prisma.project.create({
     data: {
       id: boardId,
@@ -79,6 +85,8 @@ async function insertBoard(boardId: string){
     }
   });
   await prisma.$disconnect();
+  console.log("Finish board")
+	console.log(new Date())
   return {message: "Board created"}
 }
 

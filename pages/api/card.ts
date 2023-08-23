@@ -29,6 +29,8 @@ async function exist(args: Prisma.TrelloCardCountArgs) {
 }
 
 async function insertCard(cardId: string){
+  console.log("Check if card exists")
+	console.log(new Date())
   const cardExists = await exist({
     where: {
       id: cardId
@@ -39,6 +41,8 @@ async function insertCard(cardId: string){
     return {message: "Card exists"}
   }
 
+  console.log("Trello API call")
+	console.log(new Date())
 	var cardJson: any;
 	await fetch(`https://api.trello.com/1/cards/${cardId}?list=true&fields=name,list,labels,idBoard&fields=name,desc&key=${apiKey}&token=${apiToken}`, {
 		method: 'GET',
@@ -57,6 +61,8 @@ async function insertCard(cardId: string){
 	})
   .catch((err: Error) => console.error(err));
 
+  console.log("Upsert card")
+	console.log(new Date())
 	await prisma.trelloCard.upsert({
 		create: {
 			id: cardId,
@@ -68,6 +74,8 @@ async function insertCard(cardId: string){
 	});
 	
 	await prisma.$disconnect();
+  console.log("Disconnected")
+	console.log(new Date())
   return {message: "Card created"}
 }
 
