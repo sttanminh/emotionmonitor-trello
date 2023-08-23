@@ -63,3 +63,17 @@ main()
     await prisma.$disconnect()
     process.exit(1)
   })
+
+  // const learning = await prisma.metric.upsert({
+  //   where: { name: 'Learning' },
+  //   update: {},
+  //   create: {
+  //     name: 'Learning',
+  //     default: true,
+  //     Projects: {
+  //       connect: {
+  //         id : '643d2f9487baeec2c1c0c2d1'
+  //       }
+  //     }
+  //   }
+  // })

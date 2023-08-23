@@ -3,7 +3,7 @@ import { GetStaticProps, NextPage } from "next";
 import { User } from "@prisma/client";
 import React, { useState, useEffect, useRef } from "react";
 import { Row, Col } from "react-bootstrap";
-import { Slider, ReflectionBox, Button } from "@/Components";
+import { Slider, ReflectionBox, Button, Snackbar } from "@/Components";
 import '../Components/powerup.js'
 import { eventNames } from "process";
 
@@ -21,10 +21,18 @@ interface Props {
 const Home: NextPage<Props> = () => {
   const [metrics, setMetrics] = useState<Metric[]>([]);
   const [textFieldValue, setTextFieldValue] = useState("");
+  const [snackbarVisibility, setSnackbarVisibility] = useState(false);
 
   useEffect(() => {
     // TrelloPowerUp code has already been initialized from the imported file
-  }, []);
+  }, []); 
+
+  const showSnackBar = () => {
+    setSnackbarVisibility(true);
+    setTimeout(() => {
+      setSnackbarVisibility(false);
+    }, 3500);
+  }
 
   // Generate dummy id for testing
   function generateRandomString(length: number): string {
@@ -93,6 +101,7 @@ const Home: NextPage<Props> = () => {
   const handleSaveButtonClick = () => {
     console.log(metrics);
     console.log(textFieldValue);
+    showSnackBar();
   };
 
   return (
@@ -128,6 +137,7 @@ const Home: NextPage<Props> = () => {
       <ReflectionBox onContentChange={handleTextFieldChange}></ReflectionBox>
       <Button onClick={addDummyMetric} label="Add Metric"></Button>
       <Button onClick={handleSaveButtonClick} label="Save"></Button>
+      <Snackbar visible={snackbarVisibility}></Snackbar>
     </div> 
   );
 };

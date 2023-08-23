@@ -1,6 +1,6 @@
 import { GetServerSidePropsContext } from "next";
 import { useState, useEffect, useRef } from "react";
-import { Slider, ReflectionBox, Button } from "@/Components";
+import { Slider, ReflectionBox, Button, Snackbar } from "@/Components";
 import '../Components/powerup.js';
 import insertBoard from "@/pages/api/board";
 import insertUser from "@/pages/api/member";
@@ -30,10 +30,18 @@ function CardPage(data: Props) {
 	const [metrics, setMetrics] = useState<RatingDisplayInfo[]>(latestRatings);
 	// const [sliderValue, setSliderValue] = useState(1);
 	const [textFieldValue, setTextFieldValue] = useState("");
+	const [snackbarVisibility, setSnackbarVisibility] = useState(false);
 
 	useEffect(() => {
 		// TrelloPowerUp code has already been initialized from the imported file
 	}, []);
+
+	const showSnackBar = () => {
+		setSnackbarVisibility(true);
+		setTimeout(() => {
+			setSnackbarVisibility(false);
+		}, 3500);
+	}
 
 	// Get level value
 	const handleLevelChange = (
@@ -77,6 +85,7 @@ function CardPage(data: Props) {
 	};
 
 	async function handleSaveButtonClick() {
+		showSnackBar();
 		var ratingArray: RatingWithoutSubmission[] = metrics.map((metric: RatingDisplayInfo) => {
 			return {
 				emoScore: metric.emoScore,
@@ -135,11 +144,13 @@ function CardPage(data: Props) {
 			</div>
 			<ReflectionBox onContentChange={handleTextFieldChange}></ReflectionBox>
 			<Button onClick={handleSaveButtonClick} label="Save"></Button>
+			<Snackbar visible={snackbarVisibility}></Snackbar>
 		</div>
 	);
 };
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
+	
 	const { ids } = context.query
 	var cardId = ids ? ids[0] : undefined;
 	var memberId = ids ? ids[1] : undefined;
@@ -147,35 +158,50 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 	if (boardId == undefined || memberId == undefined || cardId == undefined) {
 		throw new Error("Missing params");
 	}
+	console.log("Inserting board")
+	console.log(new Date())
 	var res = await insertBoard(boardId);
 	console.log(res)
+	console.log("Inserting member")
+	console.log(new Date())
 	res = await insertUser(memberId);
 	console.log(res)
+	console.log("Inserting card")
+	console.log(new Date())
 	res = await insertCard(cardId);
 	console.log(res)
 
+	// If no previous submission found, display default view. 
+	// Else, for each metric configured for the project, if metric was in last submission, display it. Else display default values (ex: new metrics added to project since last submission)
+	console.log("Find project's metrics")
+	console.log(new Date())
+	const metrics = await getMetricsByProjectId(boardId)
+	console.log("Get latest submission")
+	console.log(new Date())
 	var latestSubmission = await getLatestSubmission(memberId, cardId)
+	var latestRatings = latestSubmission.length != 0 ? latestSubmission[0].ratings : []
+	var lastMetrics = latestRatings.map((rating) => rating.metric.name)
 	var ratingInfo: RatingDisplayInfo[] = [];
-	if (latestSubmission.length != 0) {
-		ratingInfo = latestSubmission[0].ratings.map((rating) => {
+	
+	ratingInfo = metrics.map((metric) => {
+		var index = lastMetrics.indexOf(metric.name)
+		if (lastMetrics.indexOf(metric.name) > -1) {
 			return {
-				metricName: rating.metric.name,
-				emoScore: rating.emoScore,
-				levelScore: rating.level,
-				metricId: rating.metricId
+				metricName: latestRatings[index].metric.name,
+				emoScore: latestRatings[index].emoScore,
+				levelScore: latestRatings[index].level,
+				metricId: latestRatings[index].metricId
 			}
-		})
-	} else {
-		const metrics = await getMetricsByProjectId(boardId)
-		ratingInfo = metrics.map((metric) => {
-			return {
-				metricName: metric.name,
-				emoScore: 0,
-				levelScore: 0,
-				metricId: metric.id
-			}
-		})
-	}
+		}
+		return {
+			metricName: metric.name,
+			emoScore: 0,
+			levelScore: 0,
+			metricId: metric.id
+		}
+	})
+	console.log("End of getServerSideProps")
+	console.log(new Date())
 	return { 
 		props: {
 				latestRatings: ratingInfo,
