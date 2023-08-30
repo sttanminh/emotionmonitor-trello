@@ -168,11 +168,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
 	// If no previous submission found, display default view. 
 	// Else, for each metric configured for the project, if metric was in last submission, display it. Else display default values (ex: new metrics added to project since last submission)
-	console.log("Find project's metrics")
-	console.log(new Date())
 	const metrics = await getMetricsByProjectId(boardId)
-	console.log("Get latest submission")
-	console.log(new Date())
 	var latestSubmission = await getLatestSubmission(memberId, cardId)
 	var latestRatings = latestSubmission.length != 0 ? latestSubmission[0].ratings : []
 	var lastMetrics = latestRatings.map((rating) => rating.metric.name)
@@ -195,8 +191,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 			metricId: metric.id
 		}
 	})
-	console.log("End of getServerSideProps")
-	console.log(new Date())
 	return { 
 		props: {
 				latestRatings: ratingInfo,

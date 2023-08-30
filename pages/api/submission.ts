@@ -22,7 +22,6 @@ export type Submission = {
 async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
   if (req.method === 'POST') {
     const { submission } = req.body
-    console.log(submission)
     try {
       await insertSubmission(submission);
       res.status(201).json({ message: "Submission inserted!" });
