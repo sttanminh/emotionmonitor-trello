@@ -63,8 +63,6 @@ async function insertCard(cardId: string){
       id: cardId
     },
 	});
-	
-	await prisma.$disconnect();
   return {message: "Card created"}
 }
 

@@ -61,7 +61,6 @@ async function insertUser(memberId: string){
       id: memberId
     }
 	});
-	await prisma.$disconnect();
   return {message: "User created"}
 }
 

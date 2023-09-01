@@ -78,7 +78,6 @@ async function insertBoard(boardId: string){
       id: boardId 
     }
   });
-  await prisma.$disconnect();
   return {message: "Board created"}
 }
 
