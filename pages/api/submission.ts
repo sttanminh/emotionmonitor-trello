@@ -43,7 +43,6 @@ async function insertSubmission(submission: Submission) {
       }
     }
   });
-  await prisma.$disconnect();
   return { message: "Submission created" }
 }
 
