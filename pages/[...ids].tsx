@@ -166,9 +166,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
 	// If no previous submission found, display default view. 
 	// Else, for each metric configured for the project, if metric was in last submission, display it. Else display default values (ex: new metrics added to project since last submission)
-	console.log("getMetricsByProjectId")
+	console.log("getBoard")
 	console.log(new Date())
 	const project = await getBoard(boardId)
+	console.log("Done getBoard")
+	console.log(new Date())
 	const metrics = project? project.metrics : await getDefaultMetrics()
 	console.log("getLatestSubmission")
 	console.log(new Date())
