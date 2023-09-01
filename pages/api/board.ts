@@ -82,4 +82,15 @@ async function insertBoard(boardId: string){
   return {message: "Board created"}
 }
 
+export async function getBoard(boardId: string) {
+  return await prisma.project.findFirst({
+    where: {
+        id: boardId
+    },
+    include: {
+      metrics: true
+    }
+});
+}
+
 export default insertBoard;

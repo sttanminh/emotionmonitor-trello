@@ -6,8 +6,8 @@ import insertBoard from "@/pages/api/board";
 import insertUser from "@/pages/api/member";
 import insertCard from "@/pages/api/card";
 import { RatingWithoutSubmission, Submission, getLatestSubmission } from "@/pages/api/submission";
-import { getMetricsByProjectId } from "@/pages/api/metric";
-import { parse } from "path";
+import { getDefaultMetrics, getMetricsByProjectId } from "@/pages/api/metric";
+import { getBoard } from "@/pages/api/board";
 
 
 type RatingDisplayInfo = {
@@ -168,7 +168,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 	// Else, for each metric configured for the project, if metric was in last submission, display it. Else display default values (ex: new metrics added to project since last submission)
 	console.log("getMetricsByProjectId")
 	console.log(new Date())
-	const metrics = await getMetricsByProjectId(boardId)
+	const project = await getBoard(boardId)
+	const metrics = project? project.metrics : await getDefaultMetrics()
 	console.log("getLatestSubmission")
 	console.log(new Date())
 	var latestSubmission = await getLatestSubmission(memberId, cardId)
