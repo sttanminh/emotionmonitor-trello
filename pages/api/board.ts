@@ -30,16 +30,6 @@ async function exist(args: Prisma.ProjectCountArgs) {
 }
 
 async function insertBoard(boardId: string){
-  const boardExist = await exist({
-    where: {
-      id: boardId
-    }
-  })
-  if (boardExist) {
-    await prisma.$disconnect();
-    return {message: "Board exists"}
-  }
-
   var boardJson;
   var admins;
   
@@ -66,8 +56,8 @@ async function insertBoard(boardId: string){
     return {"id": metric.id}
   })
 
-  await prisma.project.create({
-    data: {
+  await prisma.project.upsert({
+    create: {
       id: boardId,
       source: "TRELLO",
       name: boardJson?boardJson["name"]:"",
@@ -75,6 +65,17 @@ async function insertBoard(boardId: string){
       metrics: {
         connect: defaultMetricIds
       }
+    },
+    update: {
+      source: "TRELLO",
+      name: boardJson?boardJson["name"]:"",
+      adminIds: admins,
+      metrics: {
+        connect: defaultMetricIds
+      }
+    },
+    where: { 
+      id: boardId 
     }
   });
   await prisma.$disconnect();

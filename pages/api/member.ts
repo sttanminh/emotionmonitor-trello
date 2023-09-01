@@ -29,15 +29,6 @@ async function exist(args: Prisma.UserCountArgs) {
 }
 
 async function insertUser(memberId: string){
-  const userExist = await exist({
-    where: {
-      id: memberId
-    }
-  })
-  if (userExist) {
-    await prisma.$disconnect();
-    return {message: "User exists"}
-  }
 	var memberJson: any;
 	await fetch(`https://api.trello.com/1/members/${memberId}?fields=id,fullName,email&key=${apiKey}&token=${apiToken}`, {
 		method: 'GET',
@@ -56,12 +47,19 @@ async function insertUser(memberId: string){
 	})
   .catch((err: Error) => console.error(err));
 
-	await prisma.user.create({
-		data: {
+	await prisma.user.upsert({
+		create: {
 			id: memberId,
 			name: memberJson? memberJson.fullName:"",
-			email: memberJson? memberJson.email:"",
-		}
+			email: memberJson? memberJson.email:""
+		},
+    update: {
+      name: memberJson? memberJson.fullName:"",
+			email: memberJson? memberJson.email:""
+    },
+    where: {
+      id: memberId
+    }
 	});
 	await prisma.$disconnect();
   return {message: "User created"}
