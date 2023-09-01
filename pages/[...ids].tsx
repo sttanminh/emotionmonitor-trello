@@ -159,12 +159,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 		throw new Error("Missing params");
 	}
 	
-	var res = await insertBoard(boardId);
-	console.log(res)
-	res = await insertUser(memberId);
-	console.log(res)
-	res = await insertCard(cardId);
-	console.log(res)
+	insertBoard(boardId);
+	insertUser(memberId);
+	insertCard(cardId);
 
 	// If no previous submission found, display default view. 
 	// Else, for each metric configured for the project, if metric was in last submission, display it. Else display default values (ex: new metrics added to project since last submission)
