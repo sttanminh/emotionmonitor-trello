@@ -150,7 +150,8 @@ function CardPage(data: Props) {
 };
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-	
+	console.log("Starting")
+	console.log(new Date())
 	const { ids } = context.query
 	var cardId = ids ? ids[0] : undefined;
 	var memberId = ids ? ids[1] : undefined;
@@ -165,8 +166,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
 	// If no previous submission found, display default view. 
 	// Else, for each metric configured for the project, if metric was in last submission, display it. Else display default values (ex: new metrics added to project since last submission)
+	console.log("getMetricsByProjectId")
+	console.log(new Date())
 	const metrics = await getMetricsByProjectId(boardId)
+	console.log("getLatestSubmission")
+	console.log(new Date())
 	var latestSubmission = await getLatestSubmission(memberId, cardId)
+	console.log("Done await")
+	console.log(new Date())
 	var latestRatings = latestSubmission.length != 0 ? latestSubmission[0].ratings : []
 	var lastMetrics = latestRatings.map((rating) => rating.metric.name)
 	var ratingInfo: RatingDisplayInfo[] = [];
@@ -188,6 +195,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 			metricId: metric.id
 		}
 	})
+	console.log("End of function")
+	console.log(new Date())
 	return { 
 		props: {
 				latestRatings: ratingInfo,
