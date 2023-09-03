@@ -78,6 +78,29 @@ async function insertBoard(boardId: string){
       id: boardId 
     }
   });
+  
+  await prisma.level.deleteMany({
+    where: {
+      projectId: boardId
+    }
+  })
+  const defaultLevels = ["Low", "Medium", "High"]
+  var levelObjects: any[] = []
+  defaultMetricIds.forEach(metricId => {
+    defaultLevels.forEach((level, index) => {
+      levelObjects.push({
+        levelLabel: level,
+        levelOrder: index + 1,
+        metricId: metricId["id"],
+        projectId: boardId
+      })
+    })
+  })
+
+  await prisma.level.createMany({
+    data: levelObjects
+  })
+
   return {message: "Board created"}
 }
 
