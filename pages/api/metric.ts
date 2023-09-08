@@ -1,19 +1,14 @@
 import prisma from "@/lib/prisma";
 
-export async function getDefaultMetrics() {
-    return await prisma.metric.findMany({
-        where: {
-            default: true
-        }
-    })
+export function getDefaultMetrics() {
+    return ['Complexity', 'Difficulty', 'Workload']
 }
 
-export async function getMetricsByProjectId(projectId: string) {
+export async function getActiveMetricsByProjectId(projectId: string) {
     return await prisma.metric.findMany({
         where: {
-            projectIds: {
-                has: projectId
-            }
+            projectId: projectId,
+            active: true
         }
     });
 }

@@ -6,7 +6,7 @@ import insertBoard from "@/pages/api/board";
 import insertUser from "@/pages/api/member";
 import insertCard from "@/pages/api/card";
 import { RatingWithoutSubmission, Submission, getLatestSubmission } from "@/pages/api/submission";
-import { getDefaultMetrics, getMetricsByProjectId } from "@/pages/api/metric";
+import { getActiveMetricsByProjectId } from "@/pages/api/metric";
 import { getBoard } from "@/pages/api/board";
 
 
@@ -49,7 +49,7 @@ function CardPage(data: Props) {
 		metricName: string
 	) => {
 		const levelScore = parseInt(event.target.value, 10);
-		updateMetrics(metricName, {levelScore: levelScore});
+		updateMetrics(metricName, { levelScore: levelScore });
 	}
 
 	// Get emoji value
@@ -58,8 +58,7 @@ function CardPage(data: Props) {
 		metricName: string
 	) => {
 		const emojiScore = parseInt(event.target.value, 10);
-		console.log(emojiScore)
-		updateMetrics(metricName, {emoScore: emojiScore});
+		updateMetrics(metricName, { emoScore: emojiScore });
 	}
 
 	// Function to update the emojiScore and levelScore
@@ -69,11 +68,10 @@ function CardPage(data: Props) {
 	) => {
 		const updatedMetrics = metrics.map((metric) => {
 			if (metric.metricName === metricName) {
-				return {...metric, ...changes}
+				return { ...metric, ...changes }
 			}
 			return metric;
 		})
-		console.log(updatedMetrics);
 		setMetrics(updatedMetrics);
 	}
 
@@ -97,7 +95,7 @@ function CardPage(data: Props) {
 		var submissionData: Submission = {
 			reflection: textFieldValue,
 			ratings: ratingArray,
-			timestamp: new Date(dateUTC.getTime() - dateUTC.getTimezoneOffset()*60*1000),
+			timestamp: new Date(dateUTC.getTime() - dateUTC.getTimezoneOffset() * 60 * 1000),
 			userId: user,
 			trelloCardId: card
 		}
@@ -110,7 +108,6 @@ function CardPage(data: Props) {
 				'Content-Type': 'application/json'
 			}
 		})
-		console.log(response)
 	}
 
 	return (
@@ -124,8 +121,8 @@ function CardPage(data: Props) {
 							emojiRate={metric.emoScore}
 							levelRate={metric.levelScore}
 							id={metric.metricId}
-							onEmojiChange={(event) => {handleEmojiChange(event, metric.metricName)}}
-							onLevelChange={(event) => {handleLevelChange(event, metric.metricName)}}
+							onEmojiChange={(event) => { handleEmojiChange(event, metric.metricName) }}
+							onLevelChange={(event) => { handleLevelChange(event, metric.metricName) }}
 						></Slider>
 					</div>
 				))
@@ -150,8 +147,6 @@ function CardPage(data: Props) {
 };
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-	console.log("Starting")
-	console.log(new Date())
 	const { ids } = context.query
 	var cardId = ids ? ids[0] : undefined;
 	var memberId = ids ? ids[1] : undefined;
@@ -159,28 +154,24 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 	if (boardId == undefined || memberId == undefined || cardId == undefined) {
 		throw new Error("Missing params");
 	}
-	
-	insertBoard(boardId);
+
+	var project = await getBoard(boardId)
+	if (project == null) {
+		await insertBoard(boardId);
+	} else {
+		insertBoard(boardId);
+	}
 	insertUser(memberId);
 	insertCard(cardId);
 
-	// If no previous submission found, display default view. 
+	// If no previous submission found, display default view (emo score 0, level score 0). 
 	// Else, for each metric configured for the project, if metric was in last submission, display it. Else display default values (ex: new metrics added to project since last submission)
-	console.log("getBoard")
-	console.log(new Date())
-	const project = await getBoard(boardId)
-	console.log("Done getBoard")
-	console.log(new Date())
-	const metrics = project? project.metrics : await getDefaultMetrics()
-	console.log("getLatestSubmission")
-	console.log(new Date())
+	var metrics = await getActiveMetricsByProjectId(boardId)
 	var latestSubmission = await getLatestSubmission(memberId, cardId)
-	console.log("Done await")
-	console.log(new Date())
 	var latestRatings = latestSubmission.length != 0 ? latestSubmission[0].ratings : []
 	var lastMetrics = latestRatings.map((rating) => rating.metric.name)
 	var ratingInfo: RatingDisplayInfo[] = [];
-	
+
 	ratingInfo = metrics.map((metric) => {
 		var index = lastMetrics.indexOf(metric.name)
 		if (lastMetrics.indexOf(metric.name) > -1) {
@@ -198,15 +189,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 			metricId: metric.id
 		}
 	})
-	console.log("End of function")
-	console.log(new Date())
-	return { 
+	return {
 		props: {
-				latestRatings: ratingInfo,
-				card: cardId,
-				user: memberId,
-				board: boardId
-			} 
+			latestRatings: ratingInfo,
+			card: cardId,
+			user: memberId,
+			board: boardId
+		}
 	};
 };
 

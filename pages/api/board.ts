@@ -1,8 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import dotenv from 'dotenv';
 import prisma from "@/lib/prisma";
-import { Metric, Prisma } from '@prisma/client';
-import { getDefaultMetrics } from './metric';
+import { getDefaultMetrics, getActiveMetricsByProjectId } from './metric';
+import { getDefaultLevels } from './level';
 
 dotenv.config();
 const apiKey =  process.env.API_KEY!;
@@ -24,16 +24,69 @@ async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
   }
 }
 
-async function exist(args: Prisma.ProjectCountArgs) {
-  const count = await prisma.project.count(args)
+async function exist(boardId: string) {
+  const count = await prisma.project.count({
+    where: {
+      id: boardId
+    }
+  })
   return Boolean(count)
 }
 
 async function insertBoard(boardId: string){
-  var boardJson;
-  var admins;
+  var boardJson = await retrieveBoardFromTrello(boardId);
+  var admins = boardJson.memberships.map((element: any) => element.idMember)
   
-  await fetch(`https://api.trello.com/1/boards/${boardId}?memberships=admin&key=${apiKey}&token=${apiToken}`, {
+  const defaultMetrics = getDefaultMetrics()
+  var defaultMetricsObject = defaultMetrics.map(metricName => {
+    return {
+      name: metricName
+    }
+  })
+  var boardExists = await exist(boardId)
+  await prisma.project.upsert({
+    create: {
+      id: boardId,
+      source: "TRELLO",
+      name: boardJson?boardJson["name"]:"",
+      adminIds: admins,
+      metrics: { //insert default metrics if board is new
+        createMany: {
+          data: defaultMetricsObject 
+        }
+      }
+    },
+    update: {
+      name: boardJson?boardJson["name"]:"",
+      adminIds: admins
+    },
+    where: { 
+      id: boardId 
+    }
+  });
+  
+  if (!boardExists) { //insert default levels if board is new
+    const defaultLevels = getDefaultLevels()
+    var metrics = await getActiveMetricsByProjectId(boardId)
+    var levelObjects: any[] = []
+    metrics.forEach(metric => {
+      defaultLevels.forEach((level, index) => {
+        levelObjects.push({
+          levelLabel: level,
+          levelOrder: index + 1,
+          metricId: metric.id,
+          projectId: boardId
+        })
+      })
+    })
+    await prisma.level.createMany({
+      data: levelObjects
+    })
+  }
+  return {message: "Board created"}
+}
+async function retrieveBoardFromTrello(boardId: string) {
+  return await fetch(`https://api.trello.com/1/boards/${boardId}?memberships=admin&key=${apiKey}&token=${apiToken}`, {
     method: 'GET',
     headers: {
       'Accept': 'application/json'
@@ -46,71 +99,14 @@ async function insertBoard(boardId: string){
     return response.text();
   })
   .then((text: string) => {
-    boardJson = JSON.parse(text);
-    admins = boardJson.memberships.map((element: any) => element.idMember)
+    return JSON.parse(text);
   })
-  .catch((err: Error) => console.error(err));
-
-  var defaultMetrics = await getDefaultMetrics();
-  var defaultMetricIds = defaultMetrics.map((metric: Metric) => {
-    return {"id": metric.id}
-  })
-
-  await prisma.project.upsert({
-    create: {
-      id: boardId,
-      source: "TRELLO",
-      name: boardJson?boardJson["name"]:"",
-      adminIds: admins,
-      metrics: {
-        connect: defaultMetricIds
-      }
-    },
-    update: {
-      source: "TRELLO",
-      name: boardJson?boardJson["name"]:"",
-      adminIds: admins,
-      metrics: {
-        connect: defaultMetricIds
-      }
-    },
-    where: { 
-      id: boardId 
-    }
-  });
-  
-  await prisma.level.deleteMany({
-    where: {
-      projectId: boardId
-    }
-  })
-  const defaultLevels = ["Low", "Medium", "High"]
-  var levelObjects: any[] = []
-  defaultMetricIds.forEach(metricId => {
-    defaultLevels.forEach((level, index) => {
-      levelObjects.push({
-        levelLabel: level,
-        levelOrder: index + 1,
-        metricId: metricId["id"],
-        projectId: boardId
-      })
-    })
-  })
-
-  await prisma.level.createMany({
-    data: levelObjects
-  })
-
-  return {message: "Board created"}
 }
 
 export async function getBoard(boardId: string) {
   return await prisma.project.findFirst({
     where: {
         id: boardId
-    },
-    include: {
-      metrics: true
     }
 });
 }

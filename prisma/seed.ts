@@ -1,30 +1,30 @@
 import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 async function main() {
-  const complexity = await prisma.metric.upsert({
-    where: { name: 'Complexity' },
-    update: {},
-    create: {
-      name: 'Complexity',
-      default: true
-    },
-  })
-  const difficulty = await prisma.metric.upsert({
-    where: { name: 'Difficulty' },
-    update: {},
-    create: {
-      name: 'Difficulty',
-      default: true
-    },
-  })
-	const workload = await prisma.metric.upsert({
-    where: { name: 'Workload' },
-    update: {},
-    create: {
-      name: 'Workload',
-      default: true
-    },
-  })
+  // const complexity = await prisma.metric.upsert({
+  //   where: { name: 'Complexity' },
+  //   update: {},
+  //   create: {
+  //     name: 'Complexity',
+  //     default: true
+  //   },
+  // })
+  // const difficulty = await prisma.metric.upsert({
+  //   where: { name: 'Difficulty' },
+  //   update: {},
+  //   create: {
+  //     name: 'Difficulty',
+  //     default: true
+  //   },
+  // })
+	// const workload = await prisma.metric.upsert({
+  //   where: { name: 'Workload' },
+  //   update: {},
+  //   create: {
+  //     name: 'Workload',
+  //     default: true
+  //   },
+  // })
 
 //   const submissionOne = await prisma.submission.create({
 //     data: {reflection: "this card is written terribly", timestamp: new Date(), trelloCardId: '64424477e1b9b792905c2a68', userId: '5f29ee8a6706421502f785d6'},
