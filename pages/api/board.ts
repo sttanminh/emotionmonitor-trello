@@ -7,6 +7,8 @@ import { getDefaultLevels } from './level';
 dotenv.config();
 const apiKey = process.env.API_KEY!;
 const apiToken = process.env.API_TOKEN!;
+const DEFAULT_EMOJIS = [":smile:", ":sad:", ":confused:"];  // Change # of default emojis
+const DEFAULT_REFERENCE_NUMBER = 11;
 
 type Data = {
   message: string
@@ -45,12 +47,14 @@ async function insertBoard(boardId: string) {
   })
   var boardExists = await exist(boardId)
   await prisma.project.upsert({
-    //TODO: include default emojis and reference number in create -> a new project should have default emojis and reference number
+
     create: {
       id: boardId,
       source: "TRELLO",
       name: boardJson ? boardJson["name"] : "",
       adminIds: admins,
+      emojis: DEFAULT_EMOJIS,
+      referenceNumber: DEFAULT_REFERENCE_NUMBER,
       metrics: { //insert default metrics if board is new
         createMany: {
           data: defaultMetricsObject
@@ -66,7 +70,7 @@ async function insertBoard(boardId: string) {
     }
   });
 
-  if (!boardExists) { 
+  if (!boardExists) {
     //insert default levels if board is new
     await addDefaultLevelsToProject(boardId)
   }
@@ -75,21 +79,21 @@ async function insertBoard(boardId: string) {
 
 async function addDefaultLevelsToProject(boardId: string) {
   const defaultLevels = getDefaultLevels()
-    var metrics = await getActiveMetricsByProjectId(boardId)
-    var levelObjects: any[] = []
-    metrics.forEach(metric => {
-      defaultLevels.forEach((level, index) => {
-        levelObjects.push({
-          levelLabel: level,
-          levelOrder: index + 1,
-          metricId: metric.id,
-          projectId: boardId
-        })
+  var metrics = await getActiveMetricsByProjectId(boardId)
+  var levelObjects: any[] = []
+  metrics.forEach(metric => {
+    defaultLevels.forEach((level, index) => {
+      levelObjects.push({
+        levelLabel: level,
+        levelOrder: index + 1,
+        metricId: metric.id,
+        projectId: boardId
       })
     })
-    await prisma.level.createMany({
-      data: levelObjects
-    })
+  })
+  await prisma.level.createMany({
+    data: levelObjects
+  })
 }
 
 async function retrieveBoardFromTrello(boardId: string) {
