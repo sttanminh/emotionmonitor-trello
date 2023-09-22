@@ -37,6 +37,7 @@ async function exist(boardId: string) {
 
 async function insertBoard(boardId: string) {
   var boardJson = await retrieveBoardFromTrello(boardId);
+  console.log(boardJson)
   var admins = boardJson.memberships.map((element: any) => element.idMember)
 
   const defaultMetrics = getDefaultMetrics()
@@ -46,6 +47,7 @@ async function insertBoard(boardId: string) {
     }
   })
   var boardExists = await exist(boardId)
+  console.log("Board exists in DB? " + boardExists)
   await prisma.project.upsert({
 
     create: {
@@ -115,7 +117,7 @@ async function retrieveBoardFromTrello(boardId: string) {
 }
 
 export async function getBoard(boardId: string) {
-  return await prisma.project.findFirst({
+  return await prisma.project.findMany({
     where: {
       id: boardId
     }
