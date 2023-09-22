@@ -54,7 +54,7 @@ model Project {
 
 model Metric {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String   @unique
+  name      String
   active    Boolean  @default(true)
   projectId String   @db.ObjectId
   Project   Project  @relation(fields: [projectId], references: [id])
