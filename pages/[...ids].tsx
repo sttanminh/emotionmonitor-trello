@@ -157,7 +157,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
 	var project = await getBoard(boardId)
 	console.log(project)
-	if (project == null) {
+	if (project.length == 0) {
 		console.log("In project is null")
 		await insertBoard(boardId);
 	} else {
