@@ -35,7 +35,6 @@ async function exist(boardId: string) {
 
 async function insertBoard(boardId: string) {
   var boardJson = await retrieveBoardFromTrello(boardId);
-  console.log(boardJson)
   var admins = boardJson.memberships.map((element: any) => element.idMember)
 
   const defaultMetrics = getDefaultMetrics()
@@ -45,7 +44,6 @@ async function insertBoard(boardId: string) {
     }
   })
   var boardExists = await exist(boardId)
-  console.log("Board exists in DB? " + boardExists)
   await prisma.project.upsert({
     //TODO: include default emojis and reference number in create -> a new project should have default emojis and reference number
     create: {
@@ -67,7 +65,6 @@ async function insertBoard(boardId: string) {
       id: boardId
     }
   });
-  console.log("Finished inserting board")
   if (!boardExists) { 
     //insert default levels if board is new
     await addDefaultLevelsToProject(boardId)
@@ -116,6 +113,9 @@ export async function getBoard(boardId: string) {
   return await prisma.project.findMany({
     where: {
       id: boardId
+    },
+    include: {
+      levels: true
     }
   });
 }

@@ -11,10 +11,16 @@ import { getBoard } from "@/pages/api/board";
 
 
 type RatingDisplayInfo = {
+	metricId: string,
 	metricName: string,
 	emoScore: number,
 	levelScore: number,
-	metricId: string
+	levels: {
+		levelLabel: string,
+		levelOrder: number
+	}[],
+	emojis: string[],
+	referenceNumber: number
 }
 
 type Props = {
@@ -155,13 +161,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 		throw new Error("Missing params");
 	}
 
-	var project = await getBoard(boardId)
-	console.log(project)
-	if (project.length == 0) {
-		console.log("In project is null")
+	var projectOptional = await getBoard(boardId)
+	if (projectOptional.length == 0) {
 		await insertBoard(boardId);
 	} else {
-		console.log("In project is not null")
 		insertBoard(boardId);
 	}
 	insertUser(memberId);
@@ -170,27 +173,48 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 	// If no previous submission found, display default view (emo score 0, level score 0). 
 	// Else, for each metric configured for the project, if metric was in last submission, display it. Else display default values (ex: new metrics added to project since last submission)
 	var metrics = await getActiveMetricsByProjectId(boardId)
+	var levels = projectOptional[0].levels
 	var latestSubmission = await getLatestSubmission(memberId, cardId)
 	var latestRatings = latestSubmission.length != 0 ? latestSubmission[0].ratings : []
 	var lastMetrics = latestRatings.map((rating) => rating.metric.name)
 	var ratingInfo: RatingDisplayInfo[] = [];
 
+	var levelDictionary : {[key: string]: {levelLabel: string, levelOrder: number}[]} = {}
+	levels.forEach(level => {
+		if (!(level.metricId in levelDictionary)) {
+			levelDictionary[level.metricId] = []
+		}
+		levelDictionary[level.metricId].push({
+		  levelLabel: level.levelLabel,
+		  levelOrder: level.levelOrder
+		})
+	  })
 	ratingInfo = metrics.map((metric) => {
 		var index = lastMetrics.indexOf(metric.name)
 		if (lastMetrics.indexOf(metric.name) > -1) {
-			return {
+			var data = {
 				metricName: latestRatings[index].metric.name,
 				emoScore: latestRatings[index].emoScore,
 				levelScore: latestRatings[index].level,
-				metricId: latestRatings[index].metricId
+				metricId: latestRatings[index].metricId,
+				levels: levelDictionary[metric.id],
+				emojis: ['😢', '😔', '😐', '😀', '😊'],
+				referenceNumber: 3
 			}
+			console.log(data)
+			return data
 		}
-		return {
+		var data = {
 			metricName: metric.name,
 			emoScore: 0,
 			levelScore: 0,
-			metricId: metric.id
+			metricId: metric.id,
+			levels: levelDictionary[metric.id],
+			emojis: ['😢', '😔', '😐', '😀', '😊'],
+			referenceNumber: 3
 		}
+		console.log(data)
+		return data
 	})
 	return {
 		props: {
