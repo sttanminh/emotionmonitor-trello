@@ -113,9 +113,6 @@ export async function getBoard(boardId: string) {
   return await prisma.project.findMany({
     where: {
       id: boardId
-    },
-    include: {
-      levels: true
     }
   });
 }

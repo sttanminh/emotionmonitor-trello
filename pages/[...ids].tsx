@@ -8,6 +8,7 @@ import insertCard from "@/pages/api/card";
 import { RatingWithoutSubmission, Submission, getLatestSubmission } from "@/pages/api/submission";
 import { getActiveMetricsByProjectId } from "@/pages/api/metric";
 import { getBoard } from "@/pages/api/board";
+import { getLevelsByProjectId } from "@/pages/api/level";
 
 
 type RatingDisplayInfo = {
@@ -173,7 +174,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 	// If no previous submission found, display default view (emo score 0, level score 0). 
 	// Else, for each metric configured for the project, if metric was in last submission, display it. Else display default values (ex: new metrics added to project since last submission)
 	var metrics = await getActiveMetricsByProjectId(boardId)
-	var levels = projectOptional[0].levels
+	var levels = await getLevelsByProjectId(boardId)
 	var latestSubmission = await getLatestSubmission(memberId, cardId)
 	var latestRatings = latestSubmission.length != 0 ? latestSubmission[0].ratings : []
 	var lastMetrics = latestRatings.map((rating) => rating.metric.name)
