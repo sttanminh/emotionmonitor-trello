@@ -28,7 +28,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
 }
 
 async function exist(boardId: string) {
-  const count = await prisma.project.count({ where: { trelloBoardId: boardId } }); // Match by trelloBoardId
+  const count = await prisma.project.count({ where: { id: boardId } });
   return Boolean(count);
 }
 
@@ -44,10 +44,9 @@ async function insertBoard(boardId: string) {
   });
 
   var boardExists = await exist(boardId); // Use trelloBoardId in exist function
-  const project = await prisma.project.upsert({
+  await prisma.project.upsert({
     create: {
-      id: new ObjectId().toHexString(),
-      trelloBoardId: boardId, // Insert boardId into trelloBoardId
+      id: boardId,
       source: "TRELLO",
       name: boardJson ? boardJson["name"] : "",
       adminIds: admins,
@@ -64,20 +63,20 @@ async function insertBoard(boardId: string) {
       adminIds: admins
     },
     where: {
-      trelloBoardId: boardId // Use trelloBoardId for upsert matching
+      id: boardId
     }
   });
 
   if (!boardExists) {
     //insert default levels if board is new
-    await addDefaultLevelsToProject(project.id)
+    await addDefaultLevelsToProject(boardId)
   }
   return { message: "Board created" }
 }
 
-async function addDefaultLevelsToProject(projectId: string) {
+async function addDefaultLevelsToProject(boardId: string) {
   const defaultLevels = getDefaultLevels()
-  var metrics = await getActiveMetricsByProjectId(projectId)
+  var metrics = await getActiveMetricsByProjectId(boardId)
   var levelObjects: any[] = []
   metrics.forEach(metric => {
     defaultLevels.forEach((level, index) => {
@@ -85,13 +84,14 @@ async function addDefaultLevelsToProject(projectId: string) {
         levelLabel: level,
         levelOrder: index + 1,
         metricId: metric.id,
-        projectId: projectId
+        projectId: boardId
       })
     })
   })
   await prisma.level.createMany({
     data: levelObjects
   })
+  return { message: "Board created" }
 }
 
 async function retrieveBoardFromTrello(boardId: string) {
@@ -111,8 +111,6 @@ async function retrieveBoardFromTrello(boardId: string) {
       return JSON.parse(text);
     })
 }
-
-
 
 export async function getBoard(boardId: string) {
   return await prisma.project.findFirst({
