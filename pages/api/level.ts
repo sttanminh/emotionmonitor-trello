@@ -4,8 +4,8 @@ export function getDefaultLevels() {
     return ["Low", "Medium", "High"]
 }
 
-export async function getLevelsByProjectId(projectId: string) {
-    return await prisma.level.findMany({
+export function getLevelsByProjectId(projectId: string) {
+    return prisma.level.findMany({
         where: {
             projectId: projectId
         }

@@ -34,16 +34,15 @@ async function exist(boardId: string) {
 
 async function insertBoard(boardId: string) {
   var boardJson = await retrieveBoardFromTrello(boardId);
-  var admins = boardJson.memberships.map((element: any) => element.idMember);
+  var admins = boardJson.memberships.map((element: any) => element.idMember)
 
   const defaultMetrics = getDefaultMetrics();
   var defaultMetricsObject = defaultMetrics.map(metricName => {
     return {
       name: metricName
-    };
-  });
-
-  var boardExists = await exist(boardId); // Use trelloBoardId in exist function
+    }
+  })
+  var boardExists = await exist(boardId)
   await prisma.project.upsert({
     create: {
       id: boardId,
@@ -66,7 +65,6 @@ async function insertBoard(boardId: string) {
       id: boardId
     }
   });
-
   if (!boardExists) {
     //insert default levels if board is new
     await addDefaultLevelsToProject(boardId)
