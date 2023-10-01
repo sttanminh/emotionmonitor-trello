@@ -5,7 +5,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Row, Col } from "react-bootstrap";
 import { Slider, ReflectionBox, Button, Snackbar } from "@/Components";
 import '../Components/powerup.js'
-import { eventNames } from "process";
+
 
 interface Metric {
   id: string;
@@ -23,9 +23,55 @@ const Home: NextPage<Props> = () => {
   const [textFieldValue, setTextFieldValue] = useState("");
   const [snackbarVisibility, setSnackbarVisibility] = useState(false);
 
+
+  const projectData = [{
+    metricId: "",
+    metricName: "Deadline",
+    emoScore: 1,
+    levelScore: 1,
+    levels: [
+      {
+        levelLabel: "Short",
+        levelOrder: 1
+      }, {
+        levelLabel: "Average",
+        levelOrder: 2
+      }, {
+        levelLabel: "Long",
+        levelOrder: 3
+      }
+    ],
+    emojis: ['😢', '😔', '😐', '😀', '😊'],
+    referenceNumber: 1
+  },
+  {
+    metricId: "",
+    metricName: "Difficulty",
+    emoScore: 1,
+    levelScore: 1,
+    levels: [
+      {
+        levelLabel: "Low",
+        levelOrder: 1
+      }, {
+        levelLabel: "Medium",
+        levelOrder: 2
+      }, {
+        levelLabel: "High",
+        levelOrder: 3
+      }, {
+        levelLabel: "Very high",
+        levelOrder: 4
+      }
+    ],
+    emojis: ['😢', '🥲', '😃', '😁', '😆'],
+    referenceNumber: 1
+  }
+  ]
+
   useEffect(() => {
     // TrelloPowerUp code has already been initialized from the imported file
-  }, []); 
+  }, []);
 
   const showSnackBar = () => {
     setSnackbarVisibility(true);
@@ -63,7 +109,7 @@ const Home: NextPage<Props> = () => {
     metricId: string
   ) => {
     const levelRate = parseInt(event.target.value, 10);
-    updateMetrics(metricId, {levelRate})
+    updateMetrics(metricId, { levelRate })
   }
 
   // Get emoji value
@@ -72,7 +118,7 @@ const Home: NextPage<Props> = () => {
     metricId: string
   ) => {
     const emojiRate = parseInt(event.target.value, 10);
-    updateMetrics(metricId, {emojiRate})
+    updateMetrics(metricId, { emojiRate })
   }
 
   const updateMetrics = (
@@ -81,7 +127,7 @@ const Home: NextPage<Props> = () => {
   ) => {
     const updatedMetrics = metrics.map((metric: Metric) => {
       if (metric.id === metricId) {
-        return {...metric, ...changes}
+        return { ...metric, ...changes }
       }
       return metric;
     })
@@ -105,40 +151,41 @@ const Home: NextPage<Props> = () => {
   };
 
   return (
-    <div className="App">
+    <div className="App background">
       <h1 className="title"> Emotimonitor </h1>
       <div className="SliderDiv">
-        {metrics
-          .map((metric) => (
-            <div key={metric.id} className="ColSlider">
+        {
+          projectData.map((metric, index) => (
+            <div key={index} className="ColSlider">
               <Slider
-                id={metric.id} 
-                metric={metric.name}
-                emojiRate={metric.emojiRate} // metric.rate -> metric.emojiRate
-                levelRate={metric.levelRate} //newly added
-                onEmojiChange={(event) => {handleEmojiChange(event, metric.id)}}
-                onLevelChange={(event) => {handleLevelChange(event, metric.id)}}
-              ></Slider>
+                id={metric.metricId}
+                metric={metric.metricName}
+                emojiRate={metric.emoScore}
+                levelRate={metric.levelScore}
+                emojis={metric.emojis}
+                levels={metric.levels}
+                onEmojiChange={(event) => { handleEmojiChange(event, metric.metricId) }}
+                onLevelChange={(event) => { handleLevelChange(event, metric.metricId) }} />
             </div>
           ))
-          .reduce((rows: JSX.Element[][], col, index) => {
-            if (index % 3 === 0) {
-              rows.push([]);
-            }
-            rows[rows.length - 1].push(col);
-            return rows;
-          }, [])
-          .map((row, rowIndex) => (
-            <div key={rowIndex} className="SliderDiv">
-              {row}
-            </div>
-          ))}
+            .reduce((rows: JSX.Element[][], col, index) => {
+              if (index % 3 === 0) {
+                rows.push([]);
+              }
+              rows[rows.length - 1].push(col);
+              return rows;
+            }, [])
+            .map((row, rowIndex) => (
+              <div key={rowIndex} className="SliderDiv">
+                {row}
+              </div>
+            ))}
       </div>
       <ReflectionBox onContentChange={handleTextFieldChange}></ReflectionBox>
       <Button onClick={addDummyMetric} label="Add Metric"></Button>
       <Button onClick={handleSaveButtonClick} label="Save"></Button>
       <Snackbar visible={snackbarVisibility}></Snackbar>
-    </div> 
+    </div>
   );
 };
 
