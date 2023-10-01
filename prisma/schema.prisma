@@ -8,62 +8,75 @@ generator client {
 }
 
 model TrelloCard {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  task          String
-  label         String
-  metric        Metric[]
-  timestamp     DateTime
-  status        Status
-  reflection    String
-  owner         User     @relation(fields: [ownerId], references: [id])
-  ownerId       String   @db.ObjectId
-  project       Project  @relation(fields: [projectId], references: [id])
-  projectId     String   @db.ObjectId
-}
-
-model JiraCard {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  task          String
-  label         String
-  metric        Metric[]
-  timestamp     DateTime
-  status        Status
-  reflection    String
-  owner         User     @relation(fields: [ownerId], references: [id])
-  ownerId       String   @db.ObjectId
-  project       Project  @relation(fields: [projectId], references: [id])
-  projectId     String   @db.ObjectId
+  id          String       @id @map("_id") @db.ObjectId
+  taskName    String
+  description String?
+  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String       @db.ObjectId
+  submissions Submission[]
 }
 
 model User {
-  id                String      @id @default(auto()) @map("_id") @db.ObjectId
-  name              String
-  email             String
-  trelloCards       TrelloCard[]
-  jiraCards         JiraCard[]
-  adminProjectIds   String[]    @db.ObjectId
-  adminProjects     Project[]   @relation(fields: [adminProjectIds], references: [id])
+  id              String       @id @map("_id") @db.ObjectId
+  name            String
+  email           String?
+  submissions     Submission[]
+  adminProjectIds String[]     @db.ObjectId
+  adminProjects   Project[]    @relation(fields: [adminProjectIds], references: [id])
 }
 
-model Project{
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  source        Source
-  adminIds      String[]  @db.ObjectId
-  adminList     User[]    @relation(fields: [adminIds], references: [id])
-  trelloCards   TrelloCard[]
-  jiraCards     JiraCard[]
+model Project {
+  id              String       @id @map("_id") @db.ObjectId
+  source          Source
+  name            String
+  emojis          String[]
+  referenceNumber Int?
+  metrics         Metric[]
+  adminIds        String[]     @db.ObjectId
+  adminList       User[]       @relation(fields: [adminIds], references: [id])
+  trelloCards     TrelloCard[]
+  levels          Level[]
 }
 
-type Metric{
-  name   String
-  score  Int
+model Metric {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  active    Boolean  @default(true)
+  projectId String   @db.ObjectId
+  Project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  ratings   Rating[]
+  levels    Level[]
 }
 
-enum Status {
-  IN_ANALYSIS
-  IN_DEV
-  IN_SYSTEM_TEST
-  DONE
+model Level {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  levelLabel String
+  levelOrder Int
+  metricId   String  @db.ObjectId
+  metric     Metric  @relation(fields: [metricId], references: [id])
+  projectId  String  @db.ObjectId
+  project    Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Submission {
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  reflection   String
+  ratings      Rating[]
+  timestamp    DateTime
+  user         User        @relation(fields: [userId], references: [id])
+  userId       String      @db.ObjectId
+  trelloCardId String?     @db.ObjectId
+  trelloCard   TrelloCard? @relation(fields: [trelloCardId], references: [id])
+}
+
+model Rating {
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  emoScore     Int
+  level        Int
+  submissionId String     @db.ObjectId
+  submission   Submission @relation(fields: [submissionId], references: [id])
+  metricId     String     @db.ObjectId
+  metric       Metric     @relation(fields: [metricId], references: [id])
 }
 
 enum Source {

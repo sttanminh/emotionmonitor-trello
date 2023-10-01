@@ -4,6 +4,7 @@ docker:
 	
 migrate:
 	npx prisma db push   
+	npx prisma db seed
 
 all:
 	make docker
