@@ -1,10 +1,17 @@
 import React, { use, useState } from "react";
 
+interface MetricLevel {
+  levelLabel: string
+  levelOrder: number
+}
+
 interface SliderProps {
   id: string;
   metric: string;
   emojiRate: number;
+  emojis: string[];
   levelRate: number;
+  levels: MetricLevel[];
   onLevelChange: (
     event: React.ChangeEvent<HTMLInputElement>,
     metric: string
@@ -15,7 +22,7 @@ interface SliderProps {
   ) => void;
 }
 
-const Slider: React.FC<SliderProps> = ({ id, metric, emojiRate, levelRate, onLevelChange, onEmojiChange }) => {
+const Slider: React.FC<SliderProps> = ({ id, metric, emojiRate, emojis, levelRate, levels, onLevelChange, onEmojiChange }) => {
   // Modify this line
   const [emojiValue, setEmojiValue] = useState(String(emojiRate));
   const [levelValue, setLevelValue] = useState(String(levelRate));
@@ -49,32 +56,32 @@ const Slider: React.FC<SliderProps> = ({ id, metric, emojiRate, levelRate, onLev
   };
 
   // Change the slider color when slider value is changed
-  const getLvSliderColor = (level: string): string => {
-    switch (level) {
-      case "1":
-        return "#c41e3a"; // Dark red
-      case "2":
-        return "#b8b800"; // Yellow
-      case "3":
-        return "#1890ff"; // Blue
-      default:
-        return "#ffffff"; // Default (white)
-    }
-  };
+  // const getLvSliderColor = (level: string): string => {
+  //   switch (level) {
+  //     case "1":
+  //       return "#c41e3a"; // Dark red
+  //     case "2":
+  //       return "#b8b800"; // Yellow
+  //     case "3":
+  //       return "#1890ff"; // Blue
+  //     default:
+  //       return "#ffffff"; // Default (white)
+  //   }
+  // };
 
   // Change the emoji when slider value is changed
   const getEmoji = (level: string): string => {
     switch (level) {
       case "1":
-        return "😔"; // Very sad
+        return emojis[0]; 
       case "2":
-        return "😢"; // Sad
+        return emojis[1]; 
       case "3":
-        return "😐"; // Ok
+        return emojis[2]; 
       case "4":
-        return "😊"; // Happy
+        return emojis[3];
       case "5":
-        return "😀"; // Very happy
+        return emojis[4];
       default:
         return "🤔"; // Slider (default)
     }
@@ -90,20 +97,21 @@ const Slider: React.FC<SliderProps> = ({ id, metric, emojiRate, levelRate, onLev
       <div className="slider-emoji" style={{ fontSize: "40px" }}>
         {getEmoji(emojiValue)}
       </div>
-      {/**Slider for metric level (high, medium, low) */}
+      {/**Slider for metric level */}
       <input
         type="range"
         min="1"
-        max="3"
-        className={`slider level-${2 * parseInt(levelValue) - 1}`}
+        max={levels.length}
+        className="slider"
         value={levelValue}
         onChange={handleLevelChange}
-        style={{ background: getLvSliderColor(levelValue) }}
       />
-      <div className="slider-scale">
-        <div className="scale-level">Low</div>
-        <div className="scale-level">Medium</div>
-        <div className="scale-level">High</div>
+      <div className="slider-labels">
+        {
+          levels.map((level) => (
+            <div>{level.levelLabel}</div>
+          ))
+        }
       </div>
       {/**Slider for emoji */}
       <input
@@ -113,14 +121,14 @@ const Slider: React.FC<SliderProps> = ({ id, metric, emojiRate, levelRate, onLev
         value={emojiValue}
         className={`slider level-${emojiValue}`}
         onChange={handleEmojiChange}
-        style={{ background: getEmojiSliderColor(emojiValue), marginTop: "20px" }}
+        style={{ background: getEmojiSliderColor(emojiValue), marginTop: "20px", opacity: 0.6 }}
       />
-      <div className="slider-scale">
-        <div className="scale-level">1</div>
-        <div className="scale-level">2</div>
-        <div className="scale-level">3</div>
-        <div className="scale-level">4</div>
-        <div className="scale-level">5</div>
+      <div className="slider-labels">
+        <div>1</div>
+        <div>2</div>
+        <div>3</div>
+        <div>4</div>
+        <div>5</div>
       </div>
     </div>
   );

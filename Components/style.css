@@ -4,22 +4,6 @@
     "Lucida Sans", Arial, sans-serif;
 }
 
-.slider-container {
-  background-color: #f8f8f8;
-  padding: 20px;
-  border-radius: 5px;
-  /* border-color: #000000; */
-  border: 0.5px solid #d1d1d1;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-  width: fit-content;
-  position: relative;
-  transition: all ease 0.5s;
-  height: auto;
-  justify-content: space-between;
-  align-items: center;
-  margin: 0 0px;
-}
-
 .header {
   display: flex;
   flex-direction: row;
@@ -49,28 +33,40 @@
   background-color: #b2fff0;
 }
 
+.slider-container {
+  background-color: #f8f8f8;
+  padding: 20px;
+  border-radius: 5px;
+  /* border-color: #000000; */
+  border: 0.5px solid #d1d1d1;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  width: fit-content;
+  position: relative;
+  transition: all ease 0.5s;
+  height: auto;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px;
+}
+
 .slider-container:hover {
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 10px;
 }
 
 .slider {
   -webkit-appearance: none;
-  width: 300px;
-  height: 5px;
-  border-radius: 2px;
-  background: #ffffff;
+  width: 320px;
+  height: 8px;
+  border-radius: 5px;
+  background: #b2fff0;
   outline: none;
-  opacity: 0.7;
+  opacity: 0.6;
   transition: opacity 0.2s;
 }
 
-.slider-emoji {
-  background-color: #f8f8f8;
-  transition: all 0.5s ease-in-out;
-}
-
 .slider:hover {
-  opacity: 2;
+  opacity: 1;
+  cursor: pointer;
 }
 
 /*This control the dragable circle object */
@@ -80,7 +76,7 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #ffffff;
+  background: #00c09a;
   cursor: pointer;
   border: 1px solid #ccc;
 }
@@ -110,39 +106,11 @@
   border-color: #0000ff;
 }
 
-.slider-value {
-  font-size: 20px;
-  margin-bottom: 10px;
-}
-
-.slider-scale {
+.slider-labels {
   background-color: #f8f8f8;
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
-  width: 300px;
-  margin-top: 10px;
-  align-items: center;
-}
-
-.scale-level {
-  background-color: #f8f8f8;
-  font-size: 14px;
-  font-weight: bold;
-  color: #000000;
-  text-align: center;
-  width: calc(100% / 14);
-}
-
-.slider-box {
-  background-color: #ffffff;
-  border: 1px solid #ccc;
-  padding: 10px;
-  border-radius: 5px;
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 }
 
 .slider {
@@ -161,6 +129,7 @@
   align-items: center;
   justify-content: center;
   margin: 1rem;
+  margin-top: 60px;
 }
 
 .box {

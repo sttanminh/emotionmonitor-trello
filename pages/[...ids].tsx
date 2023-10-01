@@ -118,7 +118,7 @@ function CardPage(data: Props) {
 	}
 
 	return (
-		<div className="App">
+		<div className="App background">
 			<h1 className="title"> Emotimonitor </h1>
 			<div className="SliderDiv">
 				{metrics.map((metric) => (
@@ -126,11 +126,12 @@ function CardPage(data: Props) {
 						<Slider
 							metric={metric.metricName}
 							emojiRate={metric.emoScore}
+							emojis={metric.emojis}
 							levelRate={metric.levelScore}
+							levels={metric.levels}
 							id={metric.metricId}
 							onEmojiChange={(event) => { handleEmojiChange(event, metric.metricName) }}
-							onLevelChange={(event) => { handleLevelChange(event, metric.metricName) }}
-						></Slider>
+							onLevelChange={(event) => { handleLevelChange(event, metric.metricName) }}/>
 					</div>
 				))
 					.reduce((rows: JSX.Element[][], col, index) => {
