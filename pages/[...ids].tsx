@@ -8,7 +8,6 @@ import insertCard from "@/pages/api/card";
 import { RatingWithoutSubmission, Submission, getLatestSubmission } from "@/pages/api/submission";
 import { getActiveMetricsByProjectId } from "@/pages/api/metric";
 import { getBoard } from "@/pages/api/board";
-import { getLevelsByProjectId } from "@/pages/api/level";
 
 
 type RatingDisplayInfo = {

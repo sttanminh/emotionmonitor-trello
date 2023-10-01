@@ -81,13 +81,19 @@ async function addDefaultLevelsToProject(boardId: string) {
   const defaultLevels = getDefaultLevels()
     var metrics = await getActiveMetricsByProjectId(boardId)
     var levelObjects: any[] = []
+    metrics.forEach(async metric => {
+      await prisma.level.deleteMany({
+        where: {
+          metricId: metric.id
+        }
+      })
+    })
     metrics.forEach(metric => {
       defaultLevels.forEach((level, index) => {
         levelObjects.push({
           levelLabel: level,
           levelOrder: index + 1,
-          metricId: metric.id,
-          projectId: boardId
+          metricId: metric.id
         })
       })
     })

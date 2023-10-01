@@ -35,7 +35,6 @@ model Project {
   adminIds        String[]     @db.ObjectId
   adminList       User[]       @relation(fields: [adminIds], references: [id])
   trelloCards     TrelloCard[]
-  levels          Level[]
 }
 
 model Metric {
@@ -54,8 +53,6 @@ model Level {
   levelOrder Int
   metricId   String  @db.ObjectId
   metric     Metric  @relation(fields: [metricId], references: [id])
-  projectId  String  @db.ObjectId
-  project    Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model Submission {
