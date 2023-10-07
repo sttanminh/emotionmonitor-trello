@@ -33,6 +33,7 @@ async function exist(boardId: string) {
 }
 
 async function insertBoard(boardId: string) {
+  console.log("starting")
   var boardJson = await retrieveBoardFromTrello(boardId);
   var admins = boardJson.memberships.map((element: any) => element.idMember)
 
@@ -43,6 +44,7 @@ async function insertBoard(boardId: string) {
     }
   })
   var boardExists = await exist(boardId)
+  console.log("Starting upsert")
   await prisma.project.upsert({
     create: {
       id: boardId,
@@ -65,7 +67,10 @@ async function insertBoard(boardId: string) {
       id: boardId
     }
   });
+  console.log("Finish upsert")
+  console.log(boardExists)
   if (!boardExists) {
+    console.log("Add levels")
     //insert default levels if board is new
     await addDefaultLevelsToProject(boardId)
   }
@@ -76,20 +81,25 @@ async function addDefaultLevelsToProject(boardId: string) {
   const defaultLevels = getDefaultLevels()
   var metrics = await getActiveMetricsByProjectId(boardId)
   var levelObjects: any[] = []
+  metrics.forEach(async metric => {
+    await prisma.level.deleteMany({
+      where: {
+        metricId: metric.id
+      }
+    })
+  })
   metrics.forEach(metric => {
     defaultLevels.forEach((level, index) => {
       levelObjects.push({
         levelLabel: level,
         levelOrder: index + 1,
-        metricId: metric.id,
-        projectId: boardId
+        metricId: metric.id
       })
     })
   })
   await prisma.level.createMany({
     data: levelObjects
   })
-  return { message: "Board created" }
 }
 
 async function retrieveBoardFromTrello(boardId: string) {

@@ -8,7 +8,6 @@ import insertCard from "@/pages/api/card";
 import { RatingWithoutSubmission, Submission, getLatestSubmission } from "@/pages/api/submission";
 import { getActiveMetricsByProjectId } from "@/pages/api/metric";
 import { getBoard } from "@/pages/api/board";
-import { getLevelsByProjectId } from "@/pages/api/level";
 
 
 type RatingDisplayInfo = {
@@ -163,8 +162,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 		throw new Error("Missing params");
 	}
 
-	var projectOptional = await getBoard(boardId)
-	if (projectOptional.length == 0) {
+	var project = await getBoard(boardId)
+	if (!project) {
 		await insertBoard(boardId);
 	} else {
 		insertBoard(boardId);
@@ -175,35 +174,29 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 	// If no previous submission found, display default view (emo score 0, level score 0). 
 	// Else, for each metric configured for the project, if metric was in last submission, display it. Else display default values (ex: new metrics added to project since last submission)
 	var metrics = await getActiveMetricsByProjectId(boardId)
-	var levels = await getLevelsByProjectId(boardId)
 	var latestSubmission = await getLatestSubmission(memberId, cardId)
 	var latestRatings = latestSubmission.length != 0 ? latestSubmission[0].ratings : []
 	var lastMetrics = latestRatings.map((rating) => rating.metric.name)
 	var ratingInfo: RatingDisplayInfo[] = [];
 
-	var levelDictionary : {[key: string]: {levelLabel: string, levelOrder: number}[]} = {}
-	levels.forEach(level => {
-		if (!(level.metricId in levelDictionary)) {
-			levelDictionary[level.metricId] = []
-		}
-		levelDictionary[level.metricId].push({
-		  levelLabel: level.levelLabel,
-		  levelOrder: level.levelOrder
-		})
-	  })
-	ratingInfo = metrics.map((metric) => {
+	ratingInfo = metrics!.map((metric) => {
 		var index = lastMetrics.indexOf(metric.name)
+		var levels = metric.levels.map(level => {
+			return {
+				levelLabel: level.levelLabel,
+				  levelOrder: level.levelOrder
+			}
+		})
 		if (lastMetrics.indexOf(metric.name) > -1) {
 			var data = {
 				metricName: latestRatings[index].metric.name,
 				emoScore: latestRatings[index].emoScore,
 				levelScore: latestRatings[index].level,
 				metricId: latestRatings[index].metricId,
-				levels: levelDictionary[metric.id],
+				levels: levels,
 				emojis: ['😢', '😔', '😐', '😀', '😊'],
 				referenceNumber: 3
 			}
-			console.log(data)
 			return data
 		}
 		var data = {
@@ -211,11 +204,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 			emoScore: 0,
 			levelScore: 0,
 			metricId: metric.id,
-			levels: levelDictionary[metric.id],
+			levels: levels,
 			emojis: ['😢', '😔', '😐', '😀', '😊'],
 			referenceNumber: 3
 		}
-		console.log(data)
 		return data
 	})
 	return {
