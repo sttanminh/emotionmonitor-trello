@@ -194,8 +194,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 				levelScore: latestRatings[index].level,
 				metricId: latestRatings[index].metricId,
 				levels: levels,
-				emojis: ['😢', '😔', '😐', '😀', '😊'],
-				referenceNumber: 3
+				emojis: project?.emojis!,
+				referenceNumber: project?.referenceNumber!
 			}
 			return data
 		}
@@ -205,8 +205,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 			levelScore: 0,
 			metricId: metric.id,
 			levels: levels,
-			emojis: ['😢', '😔', '😐', '😀', '😊'],
-			referenceNumber: 3
+			emojis: project?.emojis!,
+			referenceNumber: project?.referenceNumber!
 		}
 		return data
 	})
