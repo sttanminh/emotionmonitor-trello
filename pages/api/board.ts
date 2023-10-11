@@ -27,15 +27,19 @@ async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
 }
 
 async function exist(boardId: string) {
-  const count = await prisma.project.count({ where: { id: boardId } });
-  return Boolean(count);
+  const count = await prisma.project.count({
+    where: {
+      id: boardId
+    }
+  })
+  return Boolean(count)
 }
 
 async function insertBoard(boardId: string) {
   var boardJson = await retrieveBoardFromTrello(boardId);
   var admins = boardJson.memberships.map((element: any) => element.idMember)
 
-  const defaultMetrics = getDefaultMetrics();
+  const defaultMetrics = getDefaultMetrics()
   var defaultMetricsObject = defaultMetrics.map(metricName => {
     return {
       name: metricName
@@ -43,18 +47,19 @@ async function insertBoard(boardId: string) {
   })
   var boardExists = await exist(boardId)
   await prisma.project.upsert({
+    //TODO: include default emojis and reference number in create -> a new project should have default emojis and reference number
     create: {
       id: boardId,
       source: "TRELLO",
       name: boardJson ? boardJson["name"] : "",
       adminIds: admins,
-      emojis: DEFAULT_EMOJIS,
-      referenceNumber: DEFAULT_REFERENCE_NUMBER,
-      metrics: {
+      metrics: { //insert default metrics if board is new
         createMany: {
           data: defaultMetricsObject
         }
-      }
+      },
+      emojis: DEFAULT_EMOJIS,
+      referenceNumber: DEFAULT_REFERENCE_NUMBER,
     },
     update: {
       name: boardJson ? boardJson["name"] : "",
@@ -73,27 +78,21 @@ async function insertBoard(boardId: string) {
 
 async function addDefaultLevelsToProject(boardId: string) {
   const defaultLevels = getDefaultLevels()
-  var metrics = await getActiveMetricsByProjectId(boardId)
-  var levelObjects: any[] = []
-  metrics.forEach(async metric => {
-    await prisma.level.deleteMany({
-      where: {
-        metricId: metric.id
-      }
-    })
-  })
-  metrics.forEach(metric => {
-    defaultLevels.forEach((level, index) => {
-      levelObjects.push({
-        levelLabel: level,
-        levelOrder: index + 1,
-        metricId: metric.id
+    var metrics = await getActiveMetricsByProjectId(boardId)
+    var levelObjects: any[] = []
+    metrics.forEach(metric => {
+      defaultLevels.forEach((level, index) => {
+        levelObjects.push({
+          levelLabel: level,
+          levelOrder: index + 1,
+          metricId: metric.id,
+          projectId: boardId
+        })
       })
     })
-  })
-  await prisma.level.createMany({
-    data: levelObjects
-  })
+    await prisma.level.createMany({
+      data: levelObjects
+    })
 }
 
 async function retrieveBoardFromTrello(boardId: string) {
@@ -115,11 +114,11 @@ async function retrieveBoardFromTrello(boardId: string) {
 }
 
 export async function getBoard(boardId: string) {
-  return await prisma.project.findFirst({
+  return await prisma.project.findMany({
     where: {
       id: boardId
     }
   });
 }
 
-export default handler;
+export default insertBoard;
