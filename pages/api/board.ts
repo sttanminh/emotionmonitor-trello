@@ -3,13 +3,12 @@ import dotenv from 'dotenv';
 import prisma from "@/lib/prisma";
 import { getDefaultMetrics, getActiveMetricsByProjectId } from './metric';
 import { getDefaultLevels } from './level';
-import { ObjectId } from 'mongodb';
 
 dotenv.config();
 const apiKey = process.env.API_KEY!;
 const apiToken = process.env.API_TOKEN!;
-const DEFAULT_EMOJIS = [":smile:", ":sad:", ":confused:"];  // Change # of default emojis
-const DEFAULT_REFERENCE_NUMBER = 11;
+const DEFAULT_EMOJIS = ['😢', '😔', '😐', '😀', '😊'];
+const DEFAULT_REFERENCE_NUMBER = 3;
 
 type Data = {
   message: string
@@ -33,7 +32,6 @@ async function exist(boardId: string) {
 }
 
 async function insertBoard(boardId: string) {
-  console.log("starting")
   var boardJson = await retrieveBoardFromTrello(boardId);
   var admins = boardJson.memberships.map((element: any) => element.idMember)
 
@@ -44,7 +42,6 @@ async function insertBoard(boardId: string) {
     }
   })
   var boardExists = await exist(boardId)
-  console.log("Starting upsert")
   await prisma.project.upsert({
     create: {
       id: boardId,
@@ -67,10 +64,7 @@ async function insertBoard(boardId: string) {
       id: boardId
     }
   });
-  console.log("Finish upsert")
-  console.log(boardExists)
-  if (!boardExists) {
-    console.log("Add levels")
+  if (!boardExists) { 
     //insert default levels if board is new
     await addDefaultLevelsToProject(boardId)
   }
