@@ -16,6 +16,7 @@ type RatingDisplayInfo = {
 	emoScore: number,
 	levelScore: number,
 	levels: {
+		levelId: string,
 		levelLabel: string,
 		levelOrder: number
 	}[],
@@ -91,10 +92,13 @@ function CardPage(data: Props) {
 	async function handleSaveButtonClick() {
 		showSnackBar();
 		var ratingArray: RatingWithoutSubmission[] = metrics.map((metric: RatingDisplayInfo) => {
+			let levelDict: any = {}
+			metric.levels.forEach(level => levelDict[level.levelOrder] = level.levelId)
 			return {
 				emoScore: metric.emoScore,
 				level: metric.levelScore,
-				metricId: metric.metricId
+				metricId: metric.metricId,
+				levelId: levelDict[metric.levelScore]
 			}
 		})
 		var dateUTC = new Date()
@@ -181,10 +185,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
 	ratingInfo = metrics!.map((metric) => {
 		var index = lastMetrics.indexOf(metric.name)
-		var levels = metric.levels.map(level => {
+		var levels = metric.levels
+		.filter(level => level.active)
+		.map(level => {
 			return {
+				levelId: level.id,
 				levelLabel: level.levelLabel,
-				  levelOrder: level.levelOrder
+				levelOrder: level.levelOrder
 			}
 		})
 		if (lastMetrics.indexOf(metric.name) > -1) {
@@ -210,6 +217,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 		}
 		return data
 	})
+	console.log(ratingInfo)
 	return {
 		props: {
 			latestRatings: ratingInfo,

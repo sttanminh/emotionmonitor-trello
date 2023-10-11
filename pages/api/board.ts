@@ -92,6 +92,7 @@ async function addDefaultLevelsToProject(boardId: string) {
         levelObjects.push({
           levelLabel: level,
           levelOrder: index + 1,
+          active: true,
           metricId: metric.id
         })
       })
