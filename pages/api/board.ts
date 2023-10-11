@@ -7,6 +7,8 @@ import { getDefaultLevels } from './level';
 dotenv.config();
 const apiKey = process.env.API_KEY!;
 const apiToken = process.env.API_TOKEN!;
+const DEFAULT_EMOJIS = ['😢', '😔', '😐', '😀', '😊'];
+const DEFAULT_REFERENCE_NUMBER = 3;
 
 type Data = {
   message: string
@@ -57,7 +59,9 @@ async function insertBoard(boardId: string) {
         createMany: {
           data: defaultMetricsObject
         }
-      }
+      },
+      emojis: DEFAULT_EMOJIS,
+      referenceNumber: DEFAULT_REFERENCE_NUMBER,
     },
     update: {
       name: boardJson ? boardJson["name"] : "",
