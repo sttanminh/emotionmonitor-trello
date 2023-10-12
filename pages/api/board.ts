@@ -53,13 +53,13 @@ async function insertBoard(boardId: string) {
       source: "TRELLO",
       name: boardJson ? boardJson["name"] : "",
       adminIds: admins,
-      emojis:["😢", "😔", "😐", "😀", "😊"],
-      referenceNumber: 3,
       metrics: { //insert default metrics if board is new
         createMany: {
           data: defaultMetricsObject
         }
-      }
+      },
+      emojis:["😢", "😔", "😐", "😀", "😊"],
+      referenceNumber: 3,
     },
     update: {
       name: boardJson ? boardJson["name"] : "",
