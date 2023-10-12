@@ -80,13 +80,6 @@ async function addDefaultLevelsToProject(boardId: string) {
   const defaultLevels = getDefaultLevels()
     var metrics = await getActiveMetricsByProjectId(boardId)
     var levelObjects: any[] = []
-    metrics.forEach(async metric => {
-      await prisma.level.deleteMany({
-        where: {
-          metricId: metric.id
-        }
-      })
-    })
     metrics.forEach(metric => {
       defaultLevels.forEach((level, index) => {
         levelObjects.push({
@@ -97,9 +90,25 @@ async function addDefaultLevelsToProject(boardId: string) {
         })
       })
     })
+    await prisma.$transaction([
+      prisma.level.deleteMany({
+        where: {
+          metricId: {
+            in: metrics.map(metric => metric.id)
+          }
+        }
+      })
+    ]);
     await prisma.level.createMany({
       data: levelObjects
     })
+    // metrics.forEach(async metric => {
+    //   await prisma.level.deleteMany({
+    //     where: {
+    //       metricId: metric.id
+    //     }
+    //   })
+    // })
 }
 
 async function retrieveBoardFromTrello(boardId: string) {
