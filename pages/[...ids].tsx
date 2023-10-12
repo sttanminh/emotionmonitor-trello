@@ -169,6 +169,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 	var project = await getBoard(boardId)
 	if (!project) {
 		await insertBoard(boardId);
+		project = await getBoard(boardId)
 	} else {
 		insertBoard(boardId);
 	}
