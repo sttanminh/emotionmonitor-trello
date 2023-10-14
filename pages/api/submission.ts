@@ -8,6 +8,7 @@ type Data = {
 export type RatingWithoutSubmission = {
   emoScore: number,
   level: number,
+  levelId: string,
   metricId: string
 }
 
