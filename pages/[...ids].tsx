@@ -124,6 +124,7 @@ function CardPage(data: Props) {
 		<div className="App background">
 			<h1 className="title"> Emotimonitor </h1>
 			<Button onClick={handleSaveButtonClick} label="Save"></Button>
+			{snackbarVisibility && <Snackbar visible={snackbarVisibility} />}
 			<div className="SliderDiv">
 				{metrics.map((metric) => (
 					<div key={metric.metricName} className="ColSlider">
