@@ -39,16 +39,6 @@ function CardPage(data: Props) {
 	const [textFieldValue, setTextFieldValue] = useState("");
 	const [snackbarVisibility, setSnackbarVisibility] = useState(false);
 
-	useEffect(() => {
-		// TrelloPowerUp code has already been initialized from the imported file
-		// Function to run immediately on page load
-		metrics.forEach(metric => {
-			metric.levels.sort((a, b) => a.levelOrder - b.levelOrder);
-		});
-		setMetrics({ ...metrics })
-		console.log('Page loaded');
-	}, []);
-
 	const showSnackBar = () => {
 		setSnackbarVisibility(true);
 		setTimeout(() => {
