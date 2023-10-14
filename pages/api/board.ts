@@ -97,18 +97,11 @@ async function addDefaultLevelsToProject(boardId: string) {
             in: metrics.map(metric => metric.id)
           }
         }
+      }),
+      prisma.level.createMany({
+        data: levelObjects
       })
     ]);
-    await prisma.level.createMany({
-      data: levelObjects
-    })
-    // metrics.forEach(async metric => {
-    //   await prisma.level.deleteMany({
-    //     where: {
-    //       metricId: metric.id
-    //     }
-    //   })
-    // })
 }
 
 async function retrieveBoardFromTrello(boardId: string) {
