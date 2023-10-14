@@ -41,6 +41,12 @@ function CardPage(data: Props) {
 
 	useEffect(() => {
 		// TrelloPowerUp code has already been initialized from the imported file
+		// Function to run immediately on page load
+		metrics.forEach(metric => {
+			metric.levels.sort((a, b) => a.levelOrder - b.levelOrder);
+		});
+		setMetrics({ ...metrics })
+		console.log('Page loaded');
 	}, []);
 
 	const showSnackBar = () => {
@@ -135,7 +141,7 @@ function CardPage(data: Props) {
 							levels={metric.levels}
 							id={metric.metricId}
 							onEmojiChange={(event) => { handleEmojiChange(event, metric.metricName) }}
-							onLevelChange={(event) => { handleLevelChange(event, metric.metricName) }}/>
+							onLevelChange={(event) => { handleLevelChange(event, metric.metricName) }} />
 					</div>
 				))
 					.reduce((rows: JSX.Element[][], col, index) => {
@@ -187,14 +193,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 	ratingInfo = metrics!.map((metric) => {
 		var index = lastMetrics.indexOf(metric.name)
 		var levels = metric.levels
-		.filter(level => level.active)
-		.map(level => {
-			return {
-				levelId: level.id,
-				levelLabel: level.levelLabel,
-				levelOrder: level.levelOrder
-			}
-		})
+			.filter(level => level.active)
+			.map(level => {
+				return {
+					levelId: level.id,
+					levelLabel: level.levelLabel,
+					levelOrder: level.levelOrder
+				}
+			})
 		if (lastMetrics.indexOf(metric.name) > -1) {
 			var data = {
 				metricName: latestRatings[index].metric.name,
