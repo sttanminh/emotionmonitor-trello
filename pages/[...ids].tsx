@@ -46,6 +46,18 @@ function CardPage(data: Props) {
 		}, 3500);
 	}
 
+	useEffect(() => {
+		// Function to run immediately on page load
+		metrics.forEach(metric => {
+			metric.levels.sort((a, b) => a.levelOrder - b.levelOrder);
+		});
+		setMetrics(metrics);
+	}, []);
+
+  useEffect(() => {
+    // TrelloPowerUp code has already been initialized from the imported file
+  }, []);
+
 	// Get level value
 	const handleLevelChange = (
 		event: React.ChangeEvent<HTMLInputElement>,
