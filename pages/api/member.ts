@@ -50,12 +50,10 @@ async function insertUser(memberId: string){
 	await prisma.user.upsert({
 		create: {
 			id: memberId,
-			name: memberJson? memberJson.fullName:"",
-			email: memberJson? memberJson.email:""
+			name: memberJson? memberJson.fullName:""
 		},
     update: {
-      name: memberJson? memberJson.fullName:"",
-			email: memberJson? memberJson.email:""
+      name: memberJson? memberJson.fullName:""
     },
     where: {
       id: memberId

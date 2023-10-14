@@ -7,6 +7,8 @@ import { getDefaultLevels } from './level';
 dotenv.config();
 const apiKey = process.env.API_KEY!;
 const apiToken = process.env.API_TOKEN!;
+const DEFAULT_EMOJIS = ["😢", "😔", "😐", "😀", "😊"];
+const DEFAULT_REFERENCE_NUMBER = 3;
 
 type Data = {
   message: string
@@ -50,6 +52,8 @@ async function insertBoard(boardId: string) {
       id: boardId,
       source: "TRELLO",
       name: boardJson ? boardJson["name"] : "",
+      emojis: DEFAULT_EMOJIS,
+      referenceNumber: DEFAULT_REFERENCE_NUMBER,
       adminIds: admins,
       metrics: { //insert default metrics if board is new
         createMany: {
@@ -65,7 +69,7 @@ async function insertBoard(boardId: string) {
       id: boardId
     }
   });
-  if (!boardExists) { 
+  if (!boardExists) {
     //insert default levels if board is new
     await addDefaultLevelsToProject(boardId)
   }
@@ -81,14 +85,30 @@ async function addDefaultLevelsToProject(boardId: string) {
         levelObjects.push({
           levelLabel: level,
           levelOrder: index + 1,
-          metricId: metric.id,
-          projectId: boardId
+          active: true,
+          metricId: metric.id
         })
       })
     })
+    await prisma.$transaction([
+      prisma.level.deleteMany({
+        where: {
+          metricId: {
+            in: metrics.map(metric => metric.id)
+          }
+        }
+      })
+    ]);
     await prisma.level.createMany({
       data: levelObjects
     })
+    // metrics.forEach(async metric => {
+    //   await prisma.level.deleteMany({
+    //     where: {
+    //       metricId: metric.id
+    //     }
+    //   })
+    // })
 }
 
 async function retrieveBoardFromTrello(boardId: string) {
@@ -110,7 +130,7 @@ async function retrieveBoardFromTrello(boardId: string) {
 }
 
 export async function getBoard(boardId: string) {
-  return await prisma.project.findMany({
+  return await prisma.project.findFirst({
     where: {
       id: boardId
     }
