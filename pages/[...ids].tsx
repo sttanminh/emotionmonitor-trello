@@ -47,16 +47,8 @@ function CardPage(data: Props) {
 	}
 
 	useEffect(() => {
-		// Function to run immediately on page load
-		metrics.forEach(metric => {
-			metric.levels.sort((a, b) => a.levelOrder - b.levelOrder);
-		});
-		setMetrics(metrics);
+		// TrelloPowerUp code has already been initialized from the imported file
 	}, []);
-
-  useEffect(() => {
-    // TrelloPowerUp code has already been initialized from the imported file
-  }, []);
 
 	// Get level value
 	const handleLevelChange = (
@@ -226,6 +218,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 		}
 		return data
 	})
+	ratingInfo.forEach(metric => {
+		metric.levels.sort((a, b) => a.levelOrder - b.levelOrder);
+	});
 	console.log(ratingInfo)
 	return {
 		props: {
