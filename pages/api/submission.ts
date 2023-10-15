@@ -33,7 +33,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
 }
 
 async function insertSubmission(submission: Submission) {
-  await prisma.submission.create({
+  var response = await prisma.submission.create({
     data: {
       reflection: submission.reflection,
       timestamp: submission.timestamp,
@@ -44,6 +44,7 @@ async function insertSubmission(submission: Submission) {
       }
     }
   });
+  console.log(response)
   return { message: "Submission created" }
 }
 
