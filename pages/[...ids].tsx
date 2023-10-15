@@ -153,7 +153,6 @@ function CardPage(data: Props) {
 					))}
 			</div>
 			<ReflectionBox onContentChange={handleTextFieldChange}></ReflectionBox>
-			<Snackbar visible={snackbarVisibility}></Snackbar>
 		</div>
 	);
 };
