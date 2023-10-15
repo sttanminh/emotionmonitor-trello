@@ -8,6 +8,8 @@ import insertCard from "@/pages/api/card";
 import { RatingWithoutSubmission, Submission, getLatestSubmission } from "@/pages/api/submission";
 import { getActiveMetricsByProjectId } from "@/pages/api/metric";
 import { getBoard } from "@/pages/api/board";
+import { checkIsPasscodeSet } from "@/pages/api/passcode";
+import { setConfig } from "next/config.js";
 
 
 type RatingDisplayInfo = {
@@ -28,26 +30,30 @@ type Props = {
 	latestRatings: RatingDisplayInfo[],
 	card: string,
 	user: string,
-	board: string
+	board: string,
+	passcodeExists: boolean
 }
 
 
 function CardPage(data: Props) {
-	const { latestRatings, card, user, board } = data;
+	const { latestRatings, card, user, board, passcodeExists } = data;
 	const [metrics, setMetrics] = useState<RatingDisplayInfo[]>(latestRatings);
 	// const [sliderValue, setSliderValue] = useState(1);
 	const [textFieldValue, setTextFieldValue] = useState("");
 	const [snackbarVisibility, setSnackbarVisibility] = useState(false);
-
+	const [isPasscodeSet, setIsPasscodeSet] = useState(false);
+	const [passcode, setPasscode] = useState("");
 	const showSnackBar = () => {
 		setSnackbarVisibility(true);
 		setTimeout(() => {
 			setSnackbarVisibility(false);
 		}, 3500);
 	}
-
 	useEffect(() => {
 		// TrelloPowerUp code has already been initialized from the imported file
+		if (passcodeExists) {
+			setIsPasscodeSet(true);
+		}
 	}, []);
 
 	// Get level value
@@ -89,6 +95,20 @@ function CardPage(data: Props) {
 		setTextFieldValue(event.target.value);
 	};
 
+	const handlePasscodeSubmit = (newPasscode:string) => {
+		fetch('/api/passcode', {
+			method: 'POST',
+			body: JSON.stringify({
+				boardId: board,
+				passcode: newPasscode
+			}),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		}).then(()=>{
+			setIsPasscodeSet(true);
+		})
+	}
 	async function handleSaveButtonClick() {
 		showSnackBar();
 		var ratingArray: RatingWithoutSubmission[] = metrics.map((metric: RatingDisplayInfo) => {
@@ -119,10 +139,10 @@ function CardPage(data: Props) {
 			}
 		})
 	}
-
+	
 	return (
 		<div className="App background">
-			<h1 className="title"> Emotimonitor </h1>
+			{isPasscodeSet ? <div> <h1 className="title"> Emotimonitor </h1>
 			<Button onClick={handleSaveButtonClick} label="Save"></Button>
 			{snackbarVisibility && <Snackbar visible={snackbarVisibility} />}
 			<div className="SliderDiv">
@@ -153,7 +173,22 @@ function CardPage(data: Props) {
 					))}
 			</div>
 			<ReflectionBox onContentChange={handleTextFieldChange}></ReflectionBox>
-			<Snackbar visible={snackbarVisibility}></Snackbar>
+			<Snackbar visible={snackbarVisibility}></Snackbar> </div>
+			
+			: 
+			
+			<div className="flex flex-col items-center justify-center gap-y-px">  
+				<div className="bg-white shadow rounded lg:w-1/3  md:w-1/2 w-full p-10 mt-16">
+				<h1>Enter dashboard passcode:</h1>
+					<div className="relative z-0 flex flex-col gap-y-2">
+						<input  onChange={(e) => {setPasscode(e.target.value)}}type="text" id="passcode" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " />
+						<label htmlFor="passcode" className=" absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Passcode</label>
+						<button onClick={()=>handlePasscodeSubmit(passcode)}className="bg-blue-400 rounded-sm">Confirm</button>
+					</div>
+				</div>
+			</div>
+		}
+			
 		</div>
 	);
 };
@@ -166,6 +201,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 	if (boardId == undefined || memberId == undefined || cardId == undefined) {
 		throw new Error("Missing params");
 	}
+
+	//Auth checks
+	let passcodeExists = await checkIsPasscodeSet(boardId);
 
 	var project = await getBoard(boardId)
 	if (!project) {
@@ -222,13 +260,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 	ratingInfo.forEach(metric => {
 		metric.levels.sort((a, b) => a.levelOrder - b.levelOrder);
 	});
-	console.log(ratingInfo)
 	return {
 		props: {
 			latestRatings: ratingInfo,
 			card: cardId,
 			user: memberId,
-			board: boardId
+			board: boardId,
+			passcodeExists: passcodeExists
 		}
 	};
 };

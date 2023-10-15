@@ -42,7 +42,8 @@ async function insertBoard(boardId: string) {
         createMany: {
           data: defaultMetricsObject
         }
-      }
+      },
+      passcode: "",
     },
     update: {
       name: boardJson ? boardJson["name"] : "",
