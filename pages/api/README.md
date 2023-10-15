@@ -35,6 +35,20 @@ None
   "message": "Submission inserted!"
 }
 ```
+
+### Status Codes
+
+| Status Code | Description |
+| :--- | :--- |
+| 400 | `BAD REQUEST` |
+
+### Response body
+```javascript
+{
+  "message": "Bad request, please check request body"
+}
+```
+
 ### Status Codes
 
 | Status Code | Description |
