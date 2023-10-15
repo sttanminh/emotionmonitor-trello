@@ -27,7 +27,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
       await insertSubmission(submission);
       res.status(201).json({ message: "Submission inserted!" });
     } catch (error: any) {
-      res.status(500).json({ message: error.message })
+      if (error instanceof TypeError) {
+        res.status(400).json({ message: "Bad request, please check request body" })
+      } else {
+        res.status(500).json({ message: "Server error" })
+      }
     }
   }
 }
