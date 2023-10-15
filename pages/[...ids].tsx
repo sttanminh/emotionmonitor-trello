@@ -153,7 +153,6 @@ function CardPage(data: Props) {
 					))}
 			</div>
 			<ReflectionBox onContentChange={handleTextFieldChange}></ReflectionBox>
-			<Snackbar visible={snackbarVisibility}></Snackbar>
 		</div>
 	);
 };
@@ -211,7 +210,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 		var data = {
 			metricName: metric.name,
 			emoScore: 0,
-			levelScore: 0,
+			levelScore: 1,
 			metricId: metric.id,
 			levels: levels,
 			emojis: project?.emojis!,
