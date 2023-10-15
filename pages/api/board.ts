@@ -1,4 +1,3 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
 import dotenv from 'dotenv';
 import prisma from "@/lib/prisma";
 import { getDefaultMetrics, getActiveMetricsByProjectId } from './metric';
@@ -9,22 +8,6 @@ const apiKey = process.env.API_KEY!;
 const apiToken = process.env.API_TOKEN!;
 const DEFAULT_EMOJIS = ["😢", "😔", "😐", "😀", "😊"];
 const DEFAULT_REFERENCE_NUMBER = 3;
-
-type Data = {
-  message: string
-}
-
-async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
-  if (req.method === 'POST') {
-    const { boardId } = req.body
-    try {
-      await insertBoard(boardId);
-      res.status(201).json({ message: "Board inserted!" });
-    } catch (error: any) {
-      res.status(500).json({ message: error.message })
-    }
-  }
-}
 
 async function exist(boardId: string) {
   const count = await prisma.project.count({

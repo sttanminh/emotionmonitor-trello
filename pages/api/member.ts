@@ -1,32 +1,9 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
 import dotenv from 'dotenv';
 import prisma from "@/lib/prisma";
-import { Prisma } from '@prisma/client';
 
 dotenv.config();
 const apiKey =  process.env.API_KEY!;
 const apiToken = process.env.API_TOKEN!;
-
-type Data = {
-  message: string
-}
-
-async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
-  if (req.method === 'POST') {
-    const { memberId } = req.body
-    try {
-      await insertUser(memberId);
-      res.status(201).json({message: "Member inserted!"});
-    } catch (error: any) {
-      res.status(500).json({message: error.message})
-    }
-  }
-}
-
-async function exist(args: Prisma.UserCountArgs) {
-  const count = await prisma.user.count(args)
-  return Boolean(count)
-}
 
 async function insertUser(memberId: string){
 	var memberJson: any;
