@@ -45,6 +45,7 @@ async function insertSubmission(submission: Submission) {
       }
     }
   });
+  console.log("Response")
   console.log(response)
   return { message: "Submission created" }
 }
