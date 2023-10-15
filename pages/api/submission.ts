@@ -33,6 +33,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
 }
 
 async function insertSubmission(submission: Submission) {
+  console.log("In insert submission")
   var response = await prisma.submission.create({
     data: {
       reflection: submission.reflection,
