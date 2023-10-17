@@ -182,10 +182,13 @@
 }
 
 .snackbar-container {
-  display: flex;
-  margin: 40px;
-  flex-direction: row;
-  justify-content: center;
+  position: fixed;
+    bottom: 60px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100;
+
+
 }
 
 .snackbar {
@@ -203,4 +206,14 @@
 .snackbar span {
   text-align: center;
   color: black;
+}
+
+#save-button{
+  position: fixed;
+  bottom: 40px; /* Adjust this value to change the vertical position */
+  text-align: center;
+  cursor: pointer;
+  left: 45vw;
+  width: 10vw;
+  z-index: 100;
 }

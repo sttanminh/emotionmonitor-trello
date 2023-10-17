@@ -1,3 +1,6 @@
+# Emotimonitor Trello Power-Up
+
+This repo is a NextJS app used to host an iFrame for the emotimonitor trello power-up and is part of the Dev Insights Emotimonitor system, along with the [dashboard](https://github.com/dev-insights-development-team/dashboard/tree/main). The power-up is used as a means of assisting the understanding changing requirments in software systems impact the emotions of the teams that are working on it. To do this, team members of a trello board are able to rate each card on the board based on a predefined set of metrics with both their opinion of the metric for that card and their emotional response to it. Each card may be rated by the same and different people any number of times. These ratings are then displayed on the dashboard along with AI recommendations to assist team leaders in understanding the team's responses to changes over time.
 
 ## To set up local developing environment
 
@@ -21,27 +24,12 @@ Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+API routes can be accessed on http://localhost:3000/api/<endpoint>. For the full list of api routes, please see [here](https://github.com/dev-insights-development-team/emotimonitor-trello/tree/main/pages/api).
 
 The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-
-
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.

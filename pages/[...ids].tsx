@@ -188,7 +188,6 @@ function CardPage(data: Props) {
 				</div>
 			</div>
 		}
-			
 		</div>
 	);
 };
@@ -249,7 +248,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 		var data = {
 			metricName: metric.name,
 			emoScore: 0,
-			levelScore: 0,
+			levelScore: 1,
 			metricId: metric.id,
 			levels: levels,
 			emojis: project?.emojis!,
