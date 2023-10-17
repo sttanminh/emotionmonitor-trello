@@ -35,6 +35,7 @@ model Project {
   adminIds        String[]     @db.ObjectId
   adminList       User[]       @relation(fields: [adminIds], references: [id])
   trelloCards     TrelloCard[]
+  passcode        String
 }
 
 model Metric {
